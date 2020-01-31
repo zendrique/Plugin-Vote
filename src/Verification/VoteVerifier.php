@@ -39,6 +39,7 @@ class VoteVerifier
     public function setSiteDomain(string $siteDomain)
     {
         $this->siteDomain = $siteDomain;
+
         return $this;
     }
 
@@ -49,6 +50,7 @@ class VoteVerifier
     public function setApiUrl(string $apiUrl)
     {
         $this->apiUrl = $apiUrl;
+
         return $this;
     }
 
@@ -59,8 +61,7 @@ class VoteVerifier
     public function setRetrieveIdMethod($retrieveIdMethod)
     {
         $this->retrieveIdMethod = $retrieveIdMethod;
+
         return $this;
     }
-
-
 }

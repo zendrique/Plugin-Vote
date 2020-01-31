@@ -21,7 +21,7 @@ return [
             'created' => 'The site has been added.',
             'updated' => 'This site has been updated.',
             'deleted' => 'This site has been removed.',
-        ]
+        ],
     ],
 
     'rewards' => [

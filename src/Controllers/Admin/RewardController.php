@@ -17,7 +17,7 @@ class RewardController extends Controller
     public function index()
     {
         return view('vote::admin.rewards.index', [
-            'rewards' => Reward::with('server')->get()
+            'rewards' => Reward::with('server')->get(),
         ]);
     }
 
@@ -29,7 +29,7 @@ class RewardController extends Controller
     public function create()
     {
         return view('vote::admin.rewards.create', [
-            'servers' => Server::executable()->get()
+            'servers' => Server::executable()->get(),
         ]);
     }
 
@@ -56,9 +56,9 @@ class RewardController extends Controller
     public function edit(Reward $reward)
     {
         return view('vote::admin.rewards.edit', [
-                'reward' => $reward->load('server'),
-                'servers' => Server::executable()->get()
-            ]
+            'reward' => $reward->load('server'),
+            'servers' => Server::executable()->get(),
+        ]
         );
     }
 

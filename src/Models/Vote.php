@@ -4,7 +4,6 @@ namespace Azuriom\Plugin\Vote\Models;
 
 use Azuriom\Models\Traits\HasTablePrefix;
 use Azuriom\Models\User;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 /**

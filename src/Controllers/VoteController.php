@@ -34,7 +34,7 @@ class VoteController extends Controller
                 $position + 1 => [
                     'user' => $users->get($vote->user_id),
                     'votes' => $vote->count,
-                ]
+                ],
             ];
         });
 
@@ -50,7 +50,7 @@ class VoteController extends Controller
         if (! User::where('name', $name)->exists()) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'This user don t exists !'
+                'message' => 'This user don t exists !',
             ], 422);
         }
 
@@ -70,14 +70,14 @@ class VoteController extends Controller
         if ($nextVoteTime !== null) {
             return response()->json([
                 'status' => 'error',
-                'message' => trans('vote::messages.vote-delay', ['time' => $nextVoteTime])
+                'message' => trans('vote::messages.vote-delay', ['time' => $nextVoteTime]),
             ], 422);
         }
 
         if ($site->rewards->isEmpty()) {
             return response()->json([
                 'status' => 'error',
-                'message' => trans('vote::messages.site-no-rewards')
+                'message' => trans('vote::messages.site-no-rewards'),
             ], 422);
         }
 
@@ -97,7 +97,7 @@ class VoteController extends Controller
         if ($nextVoteTime !== null) {
             return response()->json([
                 'status' => 'error',
-                'message' => trans('vote::messages.vote-delay', ['time' => $nextVoteTime])
+                'message' => trans('vote::messages.vote-delay', ['time' => $nextVoteTime]),
             ], 422);
         }
 
@@ -123,7 +123,7 @@ class VoteController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'message' => trans('vote::messages.vote-success')
+            'message' => trans('vote::messages.vote-success'),
         ]);
     }
 

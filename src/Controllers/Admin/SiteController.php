@@ -57,7 +57,7 @@ class SiteController extends Controller
     {
         return view('vote::admin.sites.edit', [
             'rewards' => Reward::all(),
-            'site' => $site->load('rewards')
+            'site' => $site->load('rewards'),
         ]);
     }
 
