@@ -45,7 +45,7 @@
                 </div>
 
                 @forelse($sites as $site)
-                    <a class="btn btn-primary" href="{{ $site->url }}" target="_blank" rel="noopener" data-site-url="{{ route('vote.vote', $site) }}">{{ $site->name }}</a>
+                    <a class="btn btn-primary" href="{{ $site->url }}" target="_blank" rel="noopener noreferrer" data-site-url="{{ route('vote.vote', $site) }}">{{ $site->name }}</a>
                 @empty
                     <div class="alert alert-warning" role="alert">{{ trans('vote::messages.no-site') }}</div>
                 @endforelse
