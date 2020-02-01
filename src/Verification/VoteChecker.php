@@ -35,7 +35,7 @@ class VoteChecker
             'https://serveur-minecraft.fr/api-{id}_{ip}.json',
             'status',
             'Success');
-        
+
         $this->sites['liste-serveur.fr'] = $this->verifyByJson(
           'https://www.liste-serveur.fr/api/hasVoted/{server_token}/{ip}',
           'hasVoted',
