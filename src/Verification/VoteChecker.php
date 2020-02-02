@@ -2,7 +2,6 @@
 
 namespace Azuriom\Plugin\Vote\Verification;
 
-use GuzzleHttp\Client;
 use Illuminate\Support\Str;
 
 class VoteChecker
@@ -12,53 +11,50 @@ class VoteChecker
      *
      * @var array
      */
-    private $sites = [
-
-    ];
+    private $sites = [];
 
     public function __construct()
     {
-        $this->sites['liste-serv-minecraft.fr'] = $this->verifyByJson(
-            'https://liste-serv-minecraft.fr/api/check?server={server}&ip={ip}',
-            'status',
-            '200');
+        $this->register(VoteVerifier::for('liste-serv-minecraft.fr')
+            ->setApiUrl('https://liste-serv-minecraft.fr/api/check?server={server}&ip={ip}')
+            ->retrieveKeyByRegex('/^https:\/\/liste-serv-minecraft\.fr\/serveur\?id=(\d+)/g')
+            ->verifyByJson('status', '200'));
 
-        $this->sites['serveurs-minecraft.org'] = $this->verifyByJson(
-            'https://www.serveurs-minecraft.org/api/is_valid_vote.php?id={id}&ip={ip}&duration=5&format=json',
-            'votes',
-            '200');
+        $this->register(VoteVerifier::for('serveurs-minecraft.org')
+            ->setApiUrl('https://www.serveurs-minecraft.org/api/is_valid_vote.php?id={server}&ip={ip}&duration=15&format=json')
+            ->retrieveKeyByRegex('/^https:\/\/www\.serveurs-minecraft\.org\/vote\.php\?id=(\d+)/g')
+            ->verifyByJson('votes', '1'));
 
-        $this->sites['serveurs-minecraft.org'] = $this->verifyByJson(
-            'https://serveur-minecraft.fr/api-{id}_{ip}.json',
-            'status',
-            'Success');
+        $this->register(VoteVerifier::for('serveurs-minecraft.org')
+            ->setApiUrl('https://serveur-minecraft.fr/api-{server}_{ip}.json')
+            ->retrieveKeyByRegex('/^https:\/\/serveur-minecraft\.fr\/.+\.(\d+)/g')
+            ->verifyByJson('status', 'Success'));
 
-        $this->sites['liste-serveur.fr'] = $this->verifyByJson(
-          'https://www.liste-serveur.fr/api/hasVoted/{server_token}/{ip}',
-          'hasVoted',
-          'true');
+        $this->register(VoteVerifier::for('serveursminecraft.org')
+            ->setApiUrl('https://www.serveursminecraft.org/sm_api/peutVoter.php?id={server}&ip={ip}')
+            ->retrieveKeyByRegex('/^https:\/\/www\.serveursminecraft\.org\/serveur\/(\d+)/g')
+            ->verifyByValue('true'));
 
-        $this->sites['liste-serveurs-minecraft.org'] = $this->verifyByValue(
-            'https://api.liste-serveurs-minecraft.org/vote/vote_verification.php?server_id={id}&ip={ip}}&duration=5',
-            '1'
-            );
+        $this->register(VoteVerifier::for('liste-serveur.fr')
+            ->setApiUrl('https://www.liste-serveur.fr/api/hasVoted/{server}/{ip}')
+            ->verifyByJson('hasVoted', 'true')); // TODO get key
 
-        $this->sites['serveursminecraft.org'] = $this->verifyByDifferentValue(
-            'https://www.serveursminecraft.org/sm_api/peutVoter.php?id={id}&ip={ip}',
-            'true'
-            );
+        $this->register(VoteVerifier::for('liste-serveurs-minecraft.org')
+            ->setApiUrl('https://api.liste-serveurs-minecraft.org/vote/vote_verification.php?server_id={server}&ip={ip}}&duration=5')
+            ->verifyByValue('1')); // TODO get key
 
-        $this->sites['serveur-prive.net'] = $this->verifyByJson(
-            'https://serveur-prive.net/api/vote/json/{id}/{ip}',
-            'status',
-            '1'
-            );
+        $this->register(VoteVerifier::for('serveur-prive.net')
+            ->setApiUrl('https://serveur-prive.net/api/vote/json/{server}/{ip}')
+            ->verifyByJson('status', '1')); // TODO get key
 
-        $this->sites['top-serveurs.net'] = $this->verifyByJson(
-            'https://api.top-serveurs.net/v1/votes/check-ip?server_token={server_token}&ip={ip}',
-            'code',
-            '200'
-            );
+        $this->register(VoteVerifier::for('top-serveurs.net')
+            ->setApiUrl('https://api.top-serveurs.net/v1/votes/check-ip?server_token={server}&ip={ip}')
+            ->verifyByJson('code', '200')); // TODO get key
+    }
+
+    public function hasVerificationForSite(string $domain)
+    {
+        return array_key_exists($domain, $this->sites);
     }
 
     /**
@@ -84,56 +80,15 @@ class VoteChecker
             $host = substr($url, 4);
         }
 
-        if (! array_key_exists($host, $this->sites)) {
-            return false;
+        if (! $this->hasVerificationForSite($host)) {
+            return true;
         }
 
-        $checkMethod = $this->sites[$host];
-
-        return $checkMethod($userIp, $userName);
+        return $this->sites[$host]->verifyVote($userIp, $userName);
     }
 
-    protected function verifyByJson(string $url, string $key, string $exceptedValue)
+    protected function register(VoteVerifier $verifier)
     {
-        return function ($ip, $userName) use ($url, $key, $exceptedValue) {
-            $content = $this->readUrl($url, $ip, $userName);
-            $json = json_decode($content, true);
-
-            if (json_last_error()) {
-                return true;
-            }
-
-            return array_key_exists($key, $json) && $json[$key] === $exceptedValue;
-        };
-    }
-
-    protected function verifyByText(string $url)
-    {
-        return function ($ip, $userName) use ($url) {
-            return $this->readUrl($url, $ip, $userName) !== null;
-        };
-    }
-
-    protected function verifyByValue(string $url, string $value)
-    {
-        return function ($ip, $userName) use ($url, $value) {
-            return $this->readUrl($url, $ip, $userName) == $value;
-        };
-    }
-
-    protected function verifyByDifferentValue(string $url, string $value)
-    {
-        return function ($ip, $userName) use ($url, $value) {
-            return $this->readUrl($url, $ip, $userName) != $value;
-        };
-    }
-
-    protected function readUrl(string $url, string $ip = '0.0.0.0', string $name = '')
-    {
-        $client = new Client();
-
-        $fullUrl = str_replace(['{player}', '{ip}'], [$ip, $name], $url);
-
-        return $client->get($fullUrl)->getBody()->getContents();
+        $this->sites[$verifier->getSiteDomain()] = $verifier;
     }
 }
