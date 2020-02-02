@@ -59,7 +59,6 @@ class VoteChecker
             'code',
             '200'
             );
-
     }
 
     /**
