@@ -41,7 +41,7 @@ class VoteVerifier
 
     public static function for(string $siteDomain)
     {
-        return new VoteVerifier($siteDomain);
+        return new self($siteDomain);
     }
 
     /**
@@ -53,6 +53,7 @@ class VoteVerifier
     public function setApiUrl(string $apiUrl)
     {
         $this->apiUrl = $apiUrl;
+
         return $this;
     }
 
@@ -86,6 +87,7 @@ class VoteVerifier
 
             return array_key_exists($key, $json) && $json[$key] === $exceptedValue;
         };
+
         return $this;
     }
 
@@ -94,6 +96,7 @@ class VoteVerifier
         $this->verificationMethod = function ($ip, $userName) use ($value) {
             return $this->readUrl($this->apiUrl, $ip, $userName) == $value;
         };
+
         return $this;
     }
 
@@ -102,6 +105,7 @@ class VoteVerifier
         $this->verificationMethod = function ($ip, $userName) use ($value) {
             return $this->readUrl($this->apiUrl, $ip, $userName) != $value;
         };
+
         return $this;
     }
 
