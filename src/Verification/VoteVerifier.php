@@ -42,7 +42,7 @@ class VoteVerifier
     }
 
     /**
-     * Create a new VoteVerifier instance for the following domain (without http(s) or www)
+     * Create a new VoteVerifier instance for the following domain (without http(s) or www).
      *
      * @param  string  $siteDomain
      * @return VoteVerifier
