@@ -2,7 +2,9 @@
 
 namespace Azuriom\Plugin\Vote\Verification;
 
+use Closure;
 use GuzzleHttp\Client;
+use Illuminate\Support\Arr;
 
 class VoteVerifier
 {
@@ -39,6 +41,12 @@ class VoteVerifier
         $this->siteDomain = $siteDomain;
     }
 
+    /**
+     * Create a new VoteVerifier instance for the following domain (without http(s) or www)
+     *
+     * @param  string  $siteDomain
+     * @return VoteVerifier
+     */
     public static function for(string $siteDomain)
     {
         return new self($siteDomain);
@@ -77,15 +85,20 @@ class VoteVerifier
 
     public function verifyByJson(string $key, $exceptedValue)
     {
-        $this->verificationMethod = function ($ip, $userName) use ($key, $exceptedValue) {
-            $content = $this->readUrl($this->apiUrl, $ip, $userName);
+        $this->verificationMethod = function ($content) use ($key, $exceptedValue) {
             $json = json_decode($content, true);
 
-            if (json_last_error()) {
+            if (json_last_error() !== JSON_ERROR_NONE) {
                 return true;
             }
 
-            return array_key_exists($key, $json) && $json[$key] === $exceptedValue;
+            $value = Arr::get($json, $key);
+
+            if ($value === null) {
+                return false;
+            }
+
+            return $value == ($exceptedValue instanceof Closure ? $exceptedValue($value, $json) : $exceptedValue);
         };
 
         return $this;
@@ -93,8 +106,8 @@ class VoteVerifier
 
     public function verifyByValue(string $value)
     {
-        $this->verificationMethod = function ($ip, $userName) use ($value) {
-            return $this->readUrl($this->apiUrl, $ip, $userName) == $value;
+        $this->verificationMethod = function ($content) use ($value) {
+            return $content == $value;
         };
 
         return $this;
@@ -102,18 +115,31 @@ class VoteVerifier
 
     public function verifyByDifferentValue(string $value)
     {
-        $this->verificationMethod = function ($ip, $userName) use ($value) {
-            return $this->readUrl($this->apiUrl, $ip, $userName) != $value;
+        $this->verificationMethod = function ($content) use ($value) {
+            return $content != $value;
         };
 
         return $this;
     }
 
-    public function verifyVote($ip, $username)
+    public function verifyVote(string $voteUrl, string $ip = '', string $username = '')
     {
-        $method = $this->verificationMethod;
+        if ($this->retrieveKeyMethod === null) {
+            return true; // TODO get key
+        }
 
-        return $method($ip, $username);
+        $retrieveKeyMethod = $this->retrieveKeyMethod;
+        $verificationMethod = $this->verificationMethod;
+
+        $key = $retrieveKeyMethod ? $retrieveKeyMethod($voteUrl) : '';
+
+        $url = str_replace(['{server}', '{ip}', '{player}'], [$key, $ip, $username], $this->apiUrl);
+
+        if ($key === null) {
+            // TODO
+        }
+
+        return $verificationMethod($this->readUrl($url));
     }
 
     public function needManualServerId()
@@ -131,12 +157,10 @@ class VoteVerifier
         return $this->siteDomain;
     }
 
-    protected function readUrl(string $url, string $ip = '0.0.0.0', string $name = '')
+    protected function readUrl(string $url)
     {
         $client = new Client();
 
-        $fullUrl = str_replace(['{player}', '{ip}'], [$ip, $name], $url);
-
-        return $client->get($fullUrl)->getBody()->getContents();
+        return $client->get($url)->getBody()->getContents();
     }
 }

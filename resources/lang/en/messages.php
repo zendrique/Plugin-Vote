@@ -11,6 +11,8 @@ return [
         'votes' => 'Votes',
     ],
 
+    'unknown-user' => 'This user don\'t exists !',
+
     'no-site' => 'No voting site is available at the moment.',
     'vote-delay' => 'You already voted, you can vote again :time !',
     'site-no-rewards' => 'This site has no rewards.',

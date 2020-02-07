@@ -7,6 +7,7 @@ use Azuriom\Models\User;
 use Azuriom\Plugin\Vote\Models\Reward;
 use Azuriom\Plugin\Vote\Models\Site;
 use Azuriom\Plugin\Vote\Models\Vote;
+use Azuriom\Plugin\Vote\Verification\VoteChecker;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -50,7 +51,7 @@ class VoteController extends Controller
         if (! User::where('name', $name)->exists()) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'This user don t exists !',
+                'message' => trans('vote::messages.unknown-user'),
             ], 422);
         }
 
@@ -106,6 +107,12 @@ class VoteController extends Controller
                 'status' => 'error',
                 'message' => trans('vote::messages.site-no-rewards'),
             ], 422);
+        }
+
+        if (! app(VoteChecker::class)->verifyVote($site->url, $request->ip(), $user->name)) {
+            return response()->json([
+                'status' => 'pending',
+            ]);
         }
 
         $reward = $this->getRandomReward($site);

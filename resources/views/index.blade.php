@@ -195,15 +195,15 @@
                 axios.post(url + '/done', {
                     user: username,
                 }).then(function (response) {
-                    displayVoteAlert(response.data.message, 'success');
-
-                    document.getElementById('vote-spinner').classList.add('d-none');
-                }).catch(function (error) {
-                    if (error.response && error.response.data.retry === true) {
+                    if (response.data.status === 'pending') {
                         refreshVote(url);
                         return;
                     }
 
+                    displayVoteAlert(response.data.message, 'success');
+
+                    document.getElementById('vote-spinner').classList.add('d-none');
+                }).catch(function (error) {
                     document.getElementById('vote-spinner').classList.add('d-none');
 
                     displayVoteAlert(error.response.data.message, 'danger');
