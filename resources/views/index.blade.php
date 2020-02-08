@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Plugin home')
+@section('title', trans('vote::messages.title'))
 
 @push('styles')
     <style>
