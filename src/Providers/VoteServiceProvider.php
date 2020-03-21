@@ -62,7 +62,6 @@ class VoteServiceProvider extends BasePluginServiceProvider
         $this->registerRouteDescriptions();
 
         $this->registerAdminNavigation();
-        //
     }
 
     /**

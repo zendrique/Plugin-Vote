@@ -60,7 +60,7 @@ class VoteController extends Controller
 
     public function canVote(Request $request, Site $site)
     {
-        $user = $request->user() ?? User::where('name', $request->input('user'))->first();
+        $user = $request->user() ?? User::firstWhere('name', $request->input('user'));
 
         if ($user === null) {
             abort(401);
@@ -87,7 +87,7 @@ class VoteController extends Controller
 
     public function done(Request $request, Site $site)
     {
-        $user = $request->user() ?? User::where('name', $request->input('user'))->first();
+        $user = $request->user() ?? User::firstWhere('name', $request->input('user'));
 
         if ($user === null) {
             abort(401);

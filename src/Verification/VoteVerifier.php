@@ -3,8 +3,9 @@
 namespace Azuriom\Plugin\Vote\Verification;
 
 use Closure;
-use GuzzleHttp\Client;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Http;
 
 class VoteVerifier
 {
@@ -45,7 +46,7 @@ class VoteVerifier
      * Create a new VoteVerifier instance for the following domain (without http(s) or www).
      *
      * @param  string  $siteDomain
-     * @return VoteVerifier
+     * @return \Azuriom\Plugin\Vote\Verification\VoteVerifier
      */
     public static function for(string $siteDomain)
     {
@@ -56,7 +57,7 @@ class VoteVerifier
      * Set the API verification url for this vote site.
      *
      * @param  string  $apiUrl
-     * @return VoteVerifier
+     * @return \Azuriom\Plugin\Vote\Verification\VoteVerifier
      */
     public function setApiUrl(string $apiUrl)
     {
@@ -85,12 +86,8 @@ class VoteVerifier
 
     public function verifyByJson(string $key, $exceptedValue)
     {
-        $this->verificationMethod = function ($content) use ($key, $exceptedValue) {
-            $json = json_decode($content, true);
-
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                return true;
-            }
+        $this->verificationMethod = function (Response $response) use ($key, $exceptedValue) {
+            $json = $response->json();
 
             $value = Arr::get($json, $key);
 
@@ -106,8 +103,8 @@ class VoteVerifier
 
     public function verifyByValue(string $value)
     {
-        $this->verificationMethod = function ($content) use ($value) {
-            return $content == $value;
+        $this->verificationMethod = function (Response $response) use ($value) {
+            return $response->body() == $value;
         };
 
         return $this;
@@ -115,8 +112,8 @@ class VoteVerifier
 
     public function verifyByDifferentValue(string $value)
     {
-        $this->verificationMethod = function ($content) use ($value) {
-            return $content != $value;
+        $this->verificationMethod = function (Response $response) use ($value) {
+            return $response->body() != $value;
         };
 
         return $this;
@@ -137,9 +134,12 @@ class VoteVerifier
 
         if ($key === null) {
             // TODO
+            return true;
         }
 
-        return $verificationMethod($this->readUrl($url));
+        $response = Http::get($url);
+
+        return $verificationMethod($response);
     }
 
     public function needManualServerId()
@@ -155,12 +155,5 @@ class VoteVerifier
     public function getSiteDomain()
     {
         return $this->siteDomain;
-    }
-
-    protected function readUrl(string $url)
-    {
-        $client = new Client();
-
-        return $client->get($url)->getBody()->getContents();
     }
 }

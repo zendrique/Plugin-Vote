@@ -82,6 +82,7 @@ class RewardController extends Controller
      *
      * @param  \Azuriom\Plugin\Vote\Models\Reward  $reward
      * @return \Illuminate\Http\Response
+     *
      * @throws \Exception
      */
     public function destroy(Reward $reward)

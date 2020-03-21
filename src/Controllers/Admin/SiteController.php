@@ -85,6 +85,7 @@ class SiteController extends Controller
      *
      * @param  \Azuriom\Plugin\Vote\Models\Site  $site
      * @return \Illuminate\Http\Response
+     *
      * @throws \Exception
      */
     public function destroy(Site $site)
