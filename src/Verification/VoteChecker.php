@@ -55,6 +55,11 @@ class VoteChecker
             ->retrieveKeyByRegex('/^https:\/\/serveur-multigames\.net\/(.*)\/(.*)/', 2)
             ->verifyByValue('true'));
 
+        $this->register(VoteVerifier::for('liste-serveurs.fr')
+            ->setApiUrl('https://www.liste-serveurs.fr/api/checkVote/{server}/{ip}')
+            ->retrieveKeyByRegex('/^https:\/\/www\.liste-serveurs\.fr\/[\w\d-]+\.(\d+)/', 2)
+            ->verifyByJson('success', true));
+
         $this->register(VoteVerifier::for('liste-serveur.fr')
             ->setApiUrl('https://www.liste-serveur.fr/api/hasVoted/{server}/{ip}')
             ->verifyByJson('hasVoted', 'true')); // TODO get key
