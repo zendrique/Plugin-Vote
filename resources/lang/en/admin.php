@@ -30,9 +30,9 @@ return [
         'key-verification' => 'The votes on this website will be verified when the input below is filled.',
 
         'verifications' => [
-          'server_id' => 'Server ID',
-          'token' => 'Token',
-          'api_key' => 'API key',
+            'server_id' => 'Server ID',
+            'token' => 'Token',
+            'api_key' => 'API key',
         ],
 
         'status' => [
