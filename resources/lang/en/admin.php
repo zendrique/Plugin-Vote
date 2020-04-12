@@ -25,6 +25,16 @@ return [
 
         'delay' => 'Delay between votes in minutes',
 
+        'no-verification' => 'The votes on this website will not be verified.',
+        'auto-verification' => 'The votes on this site will be automatically verified.',
+        'key-verification' => 'The votes on this website will be verified when the input below is filled.',
+
+        'verifications' => [
+          'server_id' => 'Server ID',
+          'token' => 'Token',
+          'api_key' => 'API key',
+        ],
+
         'status' => [
             'created' => 'The site has been added.',
             'updated' => 'This site has been updated.',

@@ -16,6 +16,17 @@
     @error('url')
     <span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
     @enderror
+
+    <small id="verificationStatusLabel" class="text-info d-none"></small>
+</div>
+
+<div class="form-group d-none" id="verificationGroup">
+    <label id="keyLabel" for="keyInput">Verification</label>
+    <input type="text" min="0" class="form-control @error('verification_key') is-invalid @enderror" id="keyInput" name="verification_key" value="{{ old('verification_key', $site->verification_key ?? '') }}">
+
+    @error('verification_key')
+    <span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
+    @enderror
 </div>
 
 <div class="form-group">
@@ -38,7 +49,8 @@
                     <label class="custom-control-label" for="rewards{{ $reward->id }}">{{ $reward->name }}</label>
                 </div>
             @empty
-                <a href="{{ route('vote.admin.rewards.create') }}" class="btn btn-success btn-sm" target="_blank"><i class="fas fa-plus"></i> {{ trans('messages.actions.add') }}</a>
+                <a href="{{ route('vote.admin.rewards.create') }}" class="btn btn-success btn-sm" target="_blank"><i class="fas fa-plus"></i> {{ trans('messages.actions.add') }}
+                </a>
             @endforelse
         </div>
     </div>
@@ -52,3 +64,50 @@
     <input type="checkbox" class="custom-control-input" id="enableSwitch" name="is_enabled" @if($site->is_enabled ?? true) checked @endif>
     <label class="custom-control-label" for="enableSwitch">{{ trans('vote::admin.sites.enable') }}</label>
 </div>
+
+@push('footer-scripts')
+    <script>
+        const urlInput = document.getElementById('urlInput');
+        const verificationStatusLabel = document.getElementById('verificationStatusLabel');
+        const verificationGroup = document.getElementById('verificationGroup');
+        const verificationKeyLabel = document.getElementById('keyLabel');
+
+        function updateVoteVerification() {
+            if (urlInput.value === '') {
+                verificationGroup.classList.add('d-none');
+                verificationStatusLabel.classList.add('d-none');
+                return;
+            }
+
+            axios.get('{{ route('vote.admin.sites.verification', '') }}/' + encodeURIComponent(urlInput.value))
+            .then(function (response) {
+                verificationStatusLabel.innerText = response.data.info;
+                verificationStatusLabel.classList.remove('d-none');
+
+                if (! response.data.supported) {
+                    verificationGroup.classList.add('d-none');
+                    return;
+                }
+
+                if (response.data.automatic) {
+                    verificationGroup.classList.add('d-none');
+                    return;
+                }
+
+                verificationGroup.classList.remove('d-none');
+                verificationKeyLabel.innerText = response.data.label;
+            }).catch(function () {
+                verificationGroup.classList.add('d-none');
+                verificationStatusLabel.classList.add('d-none');
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            updateVoteVerification();
+        });
+
+        urlInput.addEventListener('focusout', function () {
+            updateVoteVerification();
+        });
+    </script>
+@endpush

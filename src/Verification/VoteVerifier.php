@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 
 class VoteVerifier
 {
@@ -69,6 +70,12 @@ class VoteVerifier
     public function retrieveKeyByRegex(string $regex, int $index = 1)
     {
         $this->retrieveKeyMethod = function ($url) use ($regex, $index) {
+            $url = str_replace(['http://', 'https://'], '', $url);
+
+            if (Str::startsWith($url, 'www.')) {
+                $url = substr($url, 4);
+            }
+
             if (! preg_match($regex, $url, $matches)) {
                 return null;
             }
@@ -82,6 +89,15 @@ class VoteVerifier
     public function retrieveKeyByDynamically(callable $method)
     {
         $this->retrieveKeyMethod = $method;
+
+        return $this;
+    }
+
+    public function requireKey(string $type)
+    {
+        $this->retrieveKeyMethod = $type;
+
+        return $this;
     }
 
     public function verifyByJson(string $key, $exceptedValue)
@@ -119,30 +135,25 @@ class VoteVerifier
         return $this;
     }
 
-    public function verifyVote(string $voteUrl, string $ip = '', string $username = '')
+    public function verifyVote(string $voteUrl, string $ip = '', string $username = '', string $voteKey = null)
     {
-        if ($this->retrieveKeyMethod === null) {
-            return true; // TODO get key
-        }
-
         $retrieveKeyMethod = $this->retrieveKeyMethod;
         $verificationMethod = $this->verificationMethod;
 
-        $key = $retrieveKeyMethod ? $retrieveKeyMethod($voteUrl) : '';
-
-        $url = str_replace(['{server}', '{ip}', '{player}'], [$key, $ip, $username], $this->apiUrl);
+        $key = $this->requireVerificationKey() ? $voteKey : $retrieveKeyMethod($voteUrl);
 
         if ($key === null) {
-            // TODO
             return true;
         }
+
+        $url = str_replace(['{server}', '{ip}', '{player}'], [$key, $ip, $username], $this->apiUrl);
 
         $response = Http::get($url);
 
         return $verificationMethod($response);
     }
 
-    public function needManualServerId()
+    public function requireVerificationKey()
     {
         return is_string($this->retrieveKeyMethod);
     }

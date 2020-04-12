@@ -109,7 +109,7 @@ class VoteController extends Controller
             ], 422);
         }
 
-        if (! app(VoteChecker::class)->verifyVote($site->url, $request->ip(), $user->name)) {
+        if (! app(VoteChecker::class)->verifyVote($site, $request->ip(), $user->name)) {
             return response()->json([
                 'status' => 'pending',
             ]);
@@ -136,17 +136,17 @@ class VoteController extends Controller
 
     private function getNextVoteTime(Site $site, User $user)
     {
-        $lastVote = $site->votes()
+        $lastVoteTime = $site->votes()
             ->where('user_id', $user->id)
             ->where('created_at', '>', now()->subMinutes($site->vote_delay))
             ->latest()
-            ->first();
+            ->value('created_at');
 
-        if ($lastVote === null) {
+        if ($lastVoteTime === null) {
             return null;
         }
 
-        return $lastVote->created_at->addMinutes($site->vote_delay)->diffForHumans();
+        return $lastVoteTime->addMinutes($site->vote_delay)->diffForHumans();
     }
 
     private function getRandomReward(Site $site)

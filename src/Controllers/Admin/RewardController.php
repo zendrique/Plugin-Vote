@@ -58,8 +58,7 @@ class RewardController extends Controller
         return view('vote::admin.rewards.edit', [
             'reward' => $reward->load('server'),
             'servers' => Server::executable()->get(),
-        ]
-        );
+        ]);
     }
 
     /**

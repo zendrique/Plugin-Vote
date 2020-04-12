@@ -28,6 +28,7 @@ class SiteRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:100'],
             'url' => ['required', 'string', 'url', 'max:150'],
+            'verification_key' => ['nullable', 'max:100'],
             'vote_delay' => ['required', 'integer', 'min:0'],
             'is_enabled' => ['filled', 'boolean'],
         ];

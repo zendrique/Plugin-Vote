@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $id
  * @property string $name
  * @property string $url
+ * @property string|null $verification_key
  * @property int $vote_delay
  * @property bool $is_enabled
  * @property \Carbon\Carbon $created_at
@@ -37,7 +38,7 @@ class Site extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'url', 'vote_delay', 'is_enabled',
+        'name', 'url', 'verification_key', 'vote_delay', 'is_enabled',
     ];
 
     /**

@@ -2,6 +2,7 @@
 
 namespace Azuriom\Plugin\Vote\Verification;
 
+use Azuriom\Plugin\Vote\Models\Site;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -19,27 +20,27 @@ class VoteChecker
     {
         $this->register(VoteVerifier::for('liste-serv-minecraft.fr')
             ->setApiUrl('https://liste-serv-minecraft.fr/api/check?server={server}&ip={ip}')
-            ->retrieveKeyByRegex('/^https:\/\/liste-serv-minecraft\.fr\/serveur\?id=(\d+)/')
+            ->retrieveKeyByRegex('/^liste-serv-minecraft\.fr\/serveur\?id=(\d+)/')
             ->verifyByJson('status', '200'));
 
         $this->register(VoteVerifier::for('serveurs-minecraft.org')
             ->setApiUrl('https://www.serveurs-minecraft.org/api/is_valid_vote.php?id={server}&ip={ip}&duration=5&format=json')
-            ->retrieveKeyByRegex('/^https:\/\/www\.serveurs-minecraft\.org\/vote\.php\?id=(\d+)/')
+            ->retrieveKeyByRegex('/^serveurs-minecraft\.org\/vote\.php\?id=(\d+)/')
             ->verifyByJson('votes', '1'));
 
         $this->register(VoteVerifier::for('serveur-minecraft.fr')
             ->setApiUrl('https://serveur-minecraft.fr/api-{server}_{ip}.json')
-            ->retrieveKeyByRegex('/^https:\/\/serveur-minecraft\.fr\/.+\.(\d+)/')
+            ->retrieveKeyByRegex('/^serveur-minecraft\.fr\/[\w\d-]+\.(\d+)/')
             ->verifyByJson('status', 'Success'));
 
         $this->register(VoteVerifier::for('serveursminecraft.org')
             ->setApiUrl('https://www.serveursminecraft.org/sm_api/peutVoter.php?id={server}&ip={ip}')
-            ->retrieveKeyByRegex('/^https:\/\/www\.serveursminecraft\.org\/serveur\/(\d+)/')
+            ->retrieveKeyByRegex('/^serveursminecraft\.org\/serveur\/(\d+)/')
             ->verifyByDifferentValue('true'));
 
         $this->register(VoteVerifier::for('serveurs-minecraft.com')
             ->setApiUrl('https://serveurs-minecraft.com/api.php?Classement={server}&ip={ip}')
-            ->retrieveKeyByRegex('/^https:\/\/serveurs-minecraft\.com\/serveur-minecraft\.php\?Classement=([^\/]+)/')
+            ->retrieveKeyByRegex('/^serveurs-minecraft\.com\/serveur-minecraft\.php\?Classement=([^\/]+)/')
             ->verifyByJson('lastVote.date', function ($lastVoteTime, $json) {
                 if (! $lastVoteTime) {
                     return false;
@@ -52,38 +53,43 @@ class VoteChecker
 
         $this->register(VoteVerifier::for('serveur-multigames.net')
             ->setApiUrl('https://serveur-multigames.net/api/{server}?ip={ip}')
-            ->retrieveKeyByRegex('/^https:\/\/serveur-multigames\.net\/(.*)\/(.*)/', 2)
+            ->retrieveKeyByRegex('/^serveur-multigames\.net\/(.*)\/(.*)/', 2)
             ->verifyByValue('true'));
 
         $this->register(VoteVerifier::for('liste-serveurs.fr')
             ->setApiUrl('https://www.liste-serveurs.fr/api/checkVote/{server}/{ip}')
-            ->retrieveKeyByRegex('/^https:\/\/www\.liste-serveurs\.fr\/[\w\d-]+\.(\d+)/', 2)
+            ->retrieveKeyByRegex('/^liste-serveurs\.fr\/[\w\d-]+\.(\d+)/', 2)
             ->verifyByJson('success', true));
 
         $this->register(VoteVerifier::for('liste-minecraft-serveurs.com')
             ->setApiUrl('https://www.liste-minecraft-serveurs.com/Api/Worker/id_server/{server}/ip/{ip}')
-            ->retrieveKeyByRegex('/^https:\/\/www\.liste-minecraft-serveurs\.com\/Serveur\/(\d+)/', 2)
+            ->retrieveKeyByRegex('/^liste-minecraft-serveurs\.com\/Serveur\/(\d+)/', 2)
             ->verifyByJson('result', 202));
 
         $this->register(VoteVerifier::for('liste-serveur.fr')
             ->setApiUrl('https://www.liste-serveur.fr/api/hasVoted/{server}/{ip}')
-            ->verifyByJson('hasVoted', 'true')); // TODO get key
+            ->requireKey('secret')
+            ->verifyByJson('hasVoted', true));
 
         $this->register(VoteVerifier::for('liste-serveurs-minecraft.org')
             ->setApiUrl('https://api.liste-serveurs-minecraft.org/vote/vote_verification.php?server_id={server}&ip={ip}}&duration=5')
-            ->verifyByValue('1')); // TODO get key
+            ->requireKey('server_id')
+            ->verifyByValue('1'));
 
         $this->register(VoteVerifier::for('serveur-prive.net')
             ->setApiUrl('https://serveur-prive.net/api/vote/json/{server}/{ip}')
-            ->verifyByJson('status', '1')); // TODO get key
+            ->requireKey('api_key')
+            ->verifyByJson('status', '1'));
 
         $this->register(VoteVerifier::for('top-serveurs.net')
             ->setApiUrl('https://api.top-serveurs.net/v1/votes/check-ip?server_token={server}&ip={ip}')
-            ->verifyByJson('code', '200')); // TODO get key
+            ->requireKey('token')
+            ->verifyByJson('code', 200));
 
         $this->register(VoteVerifier::for('kiosque-serveur.net')
             ->setApiUrl('https://api.kiosque-serveur.net/v1/vote/{ip}/{server}')
-            ->verifyByJson('vote', '1')); // TODO get key
+            ->requireKey('token')
+            ->verifyByJson('vote', 1));
     }
 
     public function hasVerificationForSite(string $domain)
@@ -91,21 +97,42 @@ class VoteChecker
         return array_key_exists($domain, $this->sites);
     }
 
+    public function getVerificationForSite(string $domain)
+    {
+        return $this->sites[$domain] ?? null;
+    }
+
     /**
      * Try to verify if the user voted if the website is supported.
      * In case of failure or unsupported website true is returned.
      *
-     * @param  string  $voteSite
+     * @param  Site  $site
      * @param  string  $userIp
      * @param  string  $userName
      * @return bool
      */
-    public function verifyVote(string $voteSite, string $userIp, string $userName)
+    public function verifyVote(Site $site, string $userIp, string $userName)
     {
-        $url = parse_url($voteSite);
+        $host = $this->parseHostFromUrl($site->url);
 
-        if ($url === false) {
+        if ($host === null) {
             return true;
+        }
+
+        return $this->sites[$host]->verifyVote($site->url, $userIp, $userName, $site->verification_key);
+    }
+
+    protected function register(VoteVerifier $verifier)
+    {
+        $this->sites[$verifier->getSiteDomain()] = $verifier;
+    }
+
+    public function parseHostFromUrl(string $rawUrl)
+    {
+        $url = parse_url($rawUrl);
+
+        if ($url === false || ! array_key_exists('host', $url)) {
+            return null;
         }
 
         $host = $url['host'];
@@ -114,15 +141,6 @@ class VoteChecker
             $host = substr($host, 4);
         }
 
-        if (! $this->hasVerificationForSite($host)) {
-            return true;
-        }
-
-        return $this->sites[$host]->verifyVote($voteSite, $userIp, $userName);
-    }
-
-    protected function register(VoteVerifier $verifier)
-    {
-        $this->sites[$verifier->getSiteDomain()] = $verifier;
+        return $host;
     }
 }

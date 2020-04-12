@@ -6,6 +6,7 @@ use Azuriom\Http\Controllers\Controller;
 use Azuriom\Plugin\Vote\Models\Reward;
 use Azuriom\Plugin\Vote\Models\Site;
 use Azuriom\Plugin\Vote\Requests\SiteRequest;
+use Azuriom\Plugin\Vote\Verification\VoteChecker;
 
 class SiteController extends Controller
 {
@@ -58,6 +59,44 @@ class SiteController extends Controller
         return view('vote::admin.sites.edit', [
             'rewards' => Reward::all(),
             'site' => $site->load('rewards'),
+        ]);
+    }
+
+    public function verificationForUrl(string $voteUrl)
+    {
+        $checker = app(VoteChecker::class);
+
+        $host = $checker->parseHostFromUrl($voteUrl);
+
+        if ($host === null) {
+            return response()->json(['message' => 'Invalid URL'], 422);
+        }
+
+        if (! $checker->hasVerificationForSite($host)) {
+            return response()->json([
+                'domain' => $host,
+                'info' => trans('vote::admin.sites.no-verification'),
+                'supported' => false,
+            ]);
+        }
+
+        $verifier = $checker->getVerificationForSite($host);
+
+        if (! $verifier->requireVerificationKey()) {
+            return response()->json([
+                'domain' => $host,
+                'info' => trans('vote::admin.sites.auto-verification'),
+                'supported' => true,
+                'automatic' => true,
+            ]);
+        }
+
+        return response()->json([
+            'domain' => $host,
+            'info' => trans('vote::admin.sites.key-verification'),
+            'supported' => true,
+            'automatic' => false,
+            'label' => trans('vote::admin.sites.verifications.'.$verifier->verificationTypeKey()),
         ]);
     }
 
