@@ -72,7 +72,7 @@ class VoteChecker
             ->verifyByJson('hasVoted', true));
 
         $this->register(VoteVerifier::for('liste-serveurs-minecraft.org')
-            ->setApiUrl('https://api.liste-serveurs-minecraft.org/vote/vote_verification.php?server_id={server}&ip={ip}}&duration=5')
+            ->setApiUrl('https://api.liste-serveurs-minecraft.org/vote/vote_verification.php?server_id={server}&ip={ip}&duration=5')
             ->requireKey('server_id')
             ->verifyByValue('1'));
 
@@ -119,7 +119,13 @@ class VoteChecker
             return true;
         }
 
-        return $this->sites[$host]->verifyVote($site->url, $userIp, $userName, $site->verification_key);
+        $verification = $this->getVerificationForSite($host);
+
+        if ($verification === null) {
+            return true;
+        }
+
+        return $verification->verifyVote($site->url, $userIp, $userName, $site->verification_key);
     }
 
     protected function register(VoteVerifier $verifier)
