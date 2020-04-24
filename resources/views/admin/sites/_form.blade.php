@@ -79,7 +79,7 @@
                 return;
             }
 
-            axios.get('{{ route('vote.admin.sites.verification', '') }}/' + encodeURIComponent(urlInput.value))
+            axios.get('{{ route('vote.admin.sites.verification') }}?url=' + encodeURIComponent(urlInput.value))
             .then(function (response) {
                 verificationStatusLabel.innerText = response.data.info;
                 verificationStatusLabel.classList.remove('d-none');

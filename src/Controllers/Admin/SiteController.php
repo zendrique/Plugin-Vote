@@ -7,6 +7,7 @@ use Azuriom\Plugin\Vote\Models\Reward;
 use Azuriom\Plugin\Vote\Models\Site;
 use Azuriom\Plugin\Vote\Requests\SiteRequest;
 use Azuriom\Plugin\Vote\Verification\VoteChecker;
+use Illuminate\Http\Request;
 
 class SiteController extends Controller
 {
@@ -62,8 +63,14 @@ class SiteController extends Controller
         ]);
     }
 
-    public function verificationForUrl(string $voteUrl)
+    public function verificationForUrl(Request $request)
     {
+        $voteUrl = $request->query('url');
+
+        if ($voteUrl === null) {
+            return response()->json(['message' => 'Invalid URL'], 422);
+        }
+
         $checker = app(VoteChecker::class);
 
         $host = $checker->parseHostFromUrl($voteUrl);

@@ -15,8 +15,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/settings', 'SettingController@show')->name('settings');
 Route::post('/settings', 'SettingController@save')->name('settings.save');
 
-Route::get('sites/verification/{url}', 'SiteController@verificationForUrl')
-    ->name('sites.verification')->where('url', '.*');
+Route::get('sites/verification', 'SiteController@verificationForUrl')->name('sites.verification');
 
 Route::resource('sites', 'SiteController')->except('show');
 Route::resource('rewards', 'RewardController')->except('show');
