@@ -10,8 +10,9 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $id
  * @property string $name
  * @property string $url
- * @property string|null $verification_key
  * @property int $vote_delay
+ * @property string|null $verification_key
+ * @property bool $has_verification
  * @property bool $is_enabled
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
@@ -38,7 +39,7 @@ class Site extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'url', 'verification_key', 'vote_delay', 'is_enabled',
+        'name', 'url', 'vote_delay', 'verification_key', 'has_verification', 'is_enabled',
     ];
 
     /**
@@ -47,6 +48,7 @@ class Site extends Model
      * @var array
      */
     protected $casts = [
+        'has_verification' => 'boolean',
         'is_enabled' => 'boolean',
     ];
 

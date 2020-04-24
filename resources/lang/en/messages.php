@@ -4,6 +4,7 @@ return [
     'title' => 'Vote',
 
     'sections' => [
+        'vote' => 'Vote',
         'top' => 'Top votes',
         'rewards' => 'Rewards',
     ],

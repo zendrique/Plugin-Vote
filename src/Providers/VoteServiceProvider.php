@@ -13,7 +13,7 @@ class VoteServiceProvider extends BasePluginServiceProvider
      */
     public function register()
     {
-        $this->registerMiddlewares();
+        //
     }
 
     /**

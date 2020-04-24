@@ -22,7 +22,7 @@
 @section('content')
     <div class="container content">
 
-        <h2>Vote</h2>
+        <h2>{{ trans('vote::messages.sections.vote') }}</h2>
 
         <div id="vote-alert"></div>
 
