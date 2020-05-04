@@ -9,6 +9,8 @@ return [
         'rewards' => 'Récompenses',
     ],
 
+    'permission' => 'Voir et gérer le plugin vote',
+
     'settings' => [
         'title' => 'Paramètres de la page de vote',
 

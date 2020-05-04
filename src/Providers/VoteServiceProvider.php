@@ -3,6 +3,7 @@
 namespace Azuriom\Plugin\Vote\Providers;
 
 use Azuriom\Extensions\Plugin\BasePluginServiceProvider;
+use Azuriom\Models\Permission;
 
 class VoteServiceProvider extends BasePluginServiceProvider
 {
@@ -32,6 +33,10 @@ class VoteServiceProvider extends BasePluginServiceProvider
         $this->registerRouteDescriptions();
 
         $this->registerAdminNavigation();
+
+        Permission::registerPermissions([
+            'vote.admin' => 'vote::admin.permission',
+        ]);
     }
 
     /**
@@ -59,6 +64,7 @@ class VoteServiceProvider extends BasePluginServiceProvider
                 'type' => 'dropdown',
                 'icon' => 'fas fa-thumbs-up',
                 'route' => 'vote.admin.*',
+                'permission' => 'vote.admin',
                 'items' => [
                     'vote.admin.settings' => 'vote::admin.nav.settings',
                     'vote.admin.sites.index' => 'vote::admin.nav.sites',
