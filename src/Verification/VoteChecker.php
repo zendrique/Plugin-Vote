@@ -86,8 +86,8 @@ class VoteChecker
             ->requireKey('token')
             ->verifyByJson('code', 200));
 
-        $this->register(VoteVerifier::for('kiosque-serveur.net')
-            ->setApiUrl('https://api.kiosque-serveur.net/v1/vote/{ip}/{server}')
+        $this->register(VoteVerifier::for('minecraft-top.com')
+            ->setApiUrl('https://api.minecraft-top.com/v1/vote/{ip}/{server}')
             ->requireKey('token')
             ->verifyByJson('vote', 1));
     }

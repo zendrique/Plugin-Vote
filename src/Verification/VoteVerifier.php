@@ -3,6 +3,7 @@
 namespace Azuriom\Plugin\Vote\Verification;
 
 use Closure;
+use Exception;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
@@ -148,9 +149,13 @@ class VoteVerifier
 
         $url = str_replace(['{server}', '{ip}', '{player}'], [$key, $ip, $username], $this->apiUrl);
 
-        $response = Http::get($url);
+        try {
+            $response = Http::get($url);
 
-        return $verificationMethod($response);
+            return $verificationMethod($response);
+        } catch (Exception $e) {
+            return true;
+        }
     }
 
     public function requireVerificationKey()
