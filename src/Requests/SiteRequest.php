@@ -15,6 +15,7 @@ class SiteRequest extends FormRequest
      * @var array
      */
     protected $checkboxes = [
+        'has_verification',
         'is_enabled',
     ];
 
@@ -30,6 +31,7 @@ class SiteRequest extends FormRequest
             'url' => ['required', 'string', 'url', 'max:150'],
             'verification_key' => ['nullable', 'max:100'],
             'vote_delay' => ['required', 'integer', 'min:0'],
+            'has_verification' => ['filled', 'boolean'],
             'is_enabled' => ['filled', 'boolean'],
         ];
     }

@@ -40,7 +40,7 @@ class VoteController extends Controller
         });
 
         return view('vote::index', [
-            'sites' => Site::whereHas('rewards')->get(),
+            'sites' => Site::enabled()->whereHas('rewards')->get(),
             'rewards' => Reward::orderByDesc('chances')->get(),
             'votes' => $votes,
         ]);
@@ -50,12 +50,11 @@ class VoteController extends Controller
     {
         if (! User::where('name', $name)->exists()) {
             return response()->json([
-                'status' => 'error',
                 'message' => trans('vote::messages.unknown-user'),
             ], 422);
         }
 
-        return response()->json(['status' => 'success']);
+        return response()->noContent();
     }
 
     public function canVote(Request $request, Site $site)
@@ -70,19 +69,17 @@ class VoteController extends Controller
 
         if ($nextVoteTime !== null) {
             return response()->json([
-                'status' => 'error',
                 'message' => trans('vote::messages.vote-delay', ['time' => $nextVoteTime]),
             ], 422);
         }
 
         if ($site->rewards->isEmpty()) {
             return response()->json([
-                'status' => 'error',
                 'message' => trans('vote::messages.site-no-rewards'),
             ], 422);
         }
 
-        return response()->json(['status' => 'success']);
+        return response()->noContent();
     }
 
     public function done(Request $request, Site $site)
@@ -97,19 +94,19 @@ class VoteController extends Controller
 
         if ($nextVoteTime !== null) {
             return response()->json([
-                'status' => 'error',
                 'message' => trans('vote::messages.vote-delay', ['time' => $nextVoteTime]),
             ], 422);
         }
 
         if ($site->rewards->isEmpty()) {
             return response()->json([
-                'status' => 'error',
                 'message' => trans('vote::messages.site-no-rewards'),
             ], 422);
         }
 
-        if (! app(VoteChecker::class)->verifyVote($site, $request->ip(), $user->name)) {
+        $voteChecker = app(VoteChecker::class);
+
+        if ($site->has_verification && ! $voteChecker->verifyVote($site, $request->ip(), $user->name)) {
             return response()->json([
                 'status' => 'pending',
             ]);
@@ -128,10 +125,7 @@ class VoteController extends Controller
 
         $reward->server->bridge()->executeCommands($commands, $user->name, $reward->need_online);
 
-        return response()->json([
-            'status' => 'success',
-            'message' => trans('vote::messages.vote-success'),
-        ]);
+        return response()->json(['message' => trans('vote::messages.vote-success')]);
     }
 
     private function getNextVoteTime(Site $site, User $user)

@@ -47,6 +47,7 @@ class Vote extends Model
      * @var array
      */
     protected $casts = [
+        'has_verification' => 'boolean',
         'is_enabled' => 'boolean',
     ];
 

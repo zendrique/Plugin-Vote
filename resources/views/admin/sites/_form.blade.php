@@ -20,22 +20,37 @@
     <small id="verificationStatusLabel" class="text-info d-none"></small>
 </div>
 
-<div class="form-group d-none" id="verificationGroup">
-    <label id="keyLabel" for="keyInput">Verification</label>
-    <input type="text" min="0" class="form-control @error('verification_key') is-invalid @enderror" id="keyInput" name="verification_key" value="{{ old('verification_key', $site->verification_key ?? '') }}">
+<div class="d-none" id="verificationGroup">
 
-    @error('verification_key')
-    <span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
-    @enderror
+    <div class="form-group custom-control custom-switch">
+        <input type="checkbox" class="custom-control-input" id="verificationSwitch" name="has_verification" @if($site->has_verification ?? true) checked @endif>
+        <label class="custom-control-label" for="verificationSwitch">{{ trans('vote::admin.sites.verifications.enable') }}</label>
+    </div>
+
+    <div class="form-group d-none" id="keyGroup">
+        <label id="keyLabel" for="keyInput">Verification</label>
+        <input type="text" min="0" class="form-control @error('verification_key') is-invalid @enderror" id="keyInput" name="verification_key" value="{{ old('verification_key', $site->verification_key ?? '') }}">
+
+        @error('verification_key')
+        <span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
+        @enderror
+    </div>
+
 </div>
 
 <div class="form-group">
     <label for="delayInput">{{ trans('vote::admin.sites.delay') }}</label>
-    <input type="number" min="0" class="form-control @error('vote_delay') is-invalid @enderror" id="delayInput" name="vote_delay" value="{{ old('vote_delay', $site->vote_delay ?? '') }}" required>
 
-    @error('vote_delay')
-    <span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
-    @enderror
+    <div class="input-group">
+        <input type="number" min="0" class="form-control @error('vote_delay') is-invalid @enderror" id="delayInput" name="vote_delay" value="{{ old('vote_delay', $site->vote_delay ?? '') }}" required>
+        <div class="input-group-append">
+            <span class="input-group-text">{{ trans('vote::admin.sites.minutes') }}</span>
+        </div>
+
+        @error('vote_delay')
+        <span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
+        @enderror
+    </div>
 </div>
 
 <div class="form-group">
@@ -70,6 +85,7 @@
         const urlInput = document.getElementById('urlInput');
         const verificationStatusLabel = document.getElementById('verificationStatusLabel');
         const verificationGroup = document.getElementById('verificationGroup');
+        const verificationKeyGroup = document.getElementById('keyGroup');
         const verificationKeyLabel = document.getElementById('keyLabel');
 
         function updateVoteVerification() {
@@ -80,23 +96,25 @@
             }
 
             axios.get('{{ route('vote.admin.sites.verification') }}?url=' + encodeURIComponent(urlInput.value))
-            .then(function (response) {
-                verificationStatusLabel.innerText = response.data.info;
-                verificationStatusLabel.classList.remove('d-none');
+                .then(function (response) {
+                    verificationStatusLabel.innerText = response.data.info;
+                    verificationStatusLabel.classList.remove('d-none');
 
-                if (! response.data.supported) {
-                    verificationGroup.classList.add('d-none');
-                    return;
-                }
+                    if (!response.data.supported) {
+                        verificationGroup.classList.add('d-none');
+                        return;
+                    }
 
-                if (response.data.automatic) {
-                    verificationGroup.classList.add('d-none');
-                    return;
-                }
+                    if (response.data.automatic) {
+                        verificationKeyGroup.classList.add('d-none');
+                        verificationGroup.classList.remove('d-none');
+                        return;
+                    }
 
-                verificationGroup.classList.remove('d-none');
-                verificationKeyLabel.innerText = response.data.label;
-            }).catch(function () {
+                    verificationKeyLabel.innerText = response.data.label;
+                    verificationKeyGroup.classList.remove('d-none');
+                    verificationGroup.classList.remove('d-none');
+                }).catch(function () {
                 verificationGroup.classList.add('d-none');
                 verificationStatusLabel.classList.add('d-none');
             });

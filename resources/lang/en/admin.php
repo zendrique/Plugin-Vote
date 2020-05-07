@@ -25,13 +25,16 @@ return [
 
         'enable' => 'Enable the site',
 
-        'delay' => 'Delay between votes in minutes',
+        'delay' => 'Delay between votes',
+        'minutes' => 'minutes',
 
         'no-verification' => 'The votes on this website will not be verified.',
         'auto-verification' => 'The votes on this site will be automatically verified.',
         'key-verification' => 'The votes on this website will be verified when the input below is filled.',
 
         'verifications' => [
+            'enable' => 'Enable votes verification',
+
             'server_id' => 'Server ID',
             'token' => 'Token',
             'api_key' => 'API key',
