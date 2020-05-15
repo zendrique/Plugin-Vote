@@ -53,7 +53,7 @@ class VoteChecker
 
         $this->register(VoteVerifier::for('serveur-multigames.net')
             ->setApiUrl('https://serveur-multigames.net/api/{server}?ip={ip}')
-            ->retrieveKeyByRegex('/^serveur-multigames\.net\/[a-z]+\/([\w\d-]+)/', 2)
+            ->retrieveKeyByRegex('/^serveur-multigames\.net\/\w+\/([\w\d-]+)/')
             ->verifyByValue('true'));
 
         $this->register(VoteVerifier::for('liste-serveurs.fr')
