@@ -81,7 +81,7 @@ class VoteVerifier
                 return null;
             }
 
-            return $matches[$index];
+            return $matches[$index] ?? null;
         };
 
         return $this;
