@@ -23,7 +23,11 @@
                             <th scope="row">{{ $site->id }}</th>
                             <td>{{ $site->name }}</td>
                             <td>{{ $site->url }}</td>
-                            <td>{{ trans_bool($site->is_enabled) }}</td>
+                            <td>
+                                <span class="badge badge-{{ $site->is_enabled ? 'success' : 'danger' }}">
+                                    {{ trans_bool($site->is_enabled) }}
+                                </span>
+                            </td>
                             <td>
                                 <a href="{{ route('vote.admin.sites.edit', $site) }}" class="mx-1" title="{{ trans('messages.actions.edit') }}" data-toggle="tooltip"><i class="fas fa-edit"></i></a>
                                 <a href="{{ route('vote.admin.sites.destroy', $site) }}" class="mx-1" title="{{ trans('messages.actions.delete') }}" data-toggle="tooltip" data-confirm="delete"><i class="fas fa-trash"></i></a>

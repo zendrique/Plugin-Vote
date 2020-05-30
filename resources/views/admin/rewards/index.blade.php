@@ -25,7 +25,11 @@
                             <td>{{ $reward->name }}</td>
                             <td>{{ $reward->server->name }}</td>
                             <td>{{ $reward->chances }} %</td>
-                            <td>{{ trans_bool($reward->is_enabled) }}</td>
+                            <td>
+                                <span class="badge badge-{{ $reward->is_enabled ? 'success' : 'danger' }}">
+                                    {{ trans_bool($reward->is_enabled) }}
+                                </span>
+                            </td>
                             <td>
                                 <a href="{{ route('vote.admin.rewards.edit', $reward) }}" class="mx-1" title="{{ trans('messages.actions.edit') }}" data-toggle="tooltip"><i class="fas fa-edit"></i></a>
                                 <a href="{{ route('vote.admin.rewards.destroy', $reward) }}" class="mx-1" title="{{ trans('messages.actions.delete') }}" data-toggle="tooltip" data-confirm="delete"><i class="fas fa-trash"></i></a>
