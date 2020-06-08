@@ -27,7 +27,7 @@ class SiteRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => ['required', 'string', 'max:100'],
+            'name' => ['required', 'string', 'max:50'],
             'url' => ['required', 'string', 'url', 'max:150'],
             'verification_key' => ['nullable', 'max:100'],
             'vote_delay' => ['required', 'integer', 'min:0'],

@@ -28,7 +28,7 @@ return [
         'delay' => 'Délai entre chaque vote',
         'minutes' => 'minutes',
 
-        'no-verification' => 'Les votes sur ce site ne peuvent pas être vérifiées.',
+        'no-verification' => 'Les votes sur ce site ne seront pas être vérifiés.',
         'auto-verification' => 'Les votes sur ce site seront automatiquement vérifiés.',
         'key-verification' => 'Les votes sur ce site seront vérifiés quand le champ ci-dessous est rempli.',
 

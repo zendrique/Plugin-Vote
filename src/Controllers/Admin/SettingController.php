@@ -31,7 +31,7 @@ class SettingController extends Controller
     public function save(Request $request)
     {
         Setting::updateSettings('vote.top-players-count', $this->validate($request, [
-            'top-players-count' => ['numeric', 'min:5', 'max:250'],
+            'top-players-count' => ['numeric', 'min:1'],
         ])['top-players-count']);
         Setting::updateSettings('vote.display-rewards', $request->has('display-rewards'));
 

@@ -119,6 +119,11 @@ class VoteController extends Controller
             'reward_id' => $reward->id,
         ]);
 
+        if ($reward->money > 0) {
+            $user->addMoney($reward->money);
+            $user->save();
+        }
+
         $commands = array_map(function ($el) use ($reward) {
             return str_replace('{reward}', $reward->name, $el);
         }, $reward->commands ?? []);

@@ -17,7 +17,7 @@
     <span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
     @enderror
 
-    <small id="verificationStatusLabel" class="text-info d-none"></small>
+    <small id="verificationStatusLabel" class="form-text text-info d-none"></small>
 </div>
 
 <div class="d-none" id="verificationGroup">
