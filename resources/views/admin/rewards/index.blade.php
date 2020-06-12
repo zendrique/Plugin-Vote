@@ -23,7 +23,7 @@
                         <tr>
                             <th scope="row">{{ $reward->id }}</th>
                             <td>{{ $reward->name }}</td>
-                            <td>{{ $reward->server->name }}</td>
+                            <td>{{ $reward->server->name ?? '?' }}</td>
                             <td>{{ $reward->chances }} %</td>
                             <td>
                                 <span class="badge badge-{{ $reward->is_enabled ? 'success' : 'danger' }}">

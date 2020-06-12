@@ -16,8 +16,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Carbon\Carbon $updated_at
  *
  * @property \Azuriom\Models\User $user
- * @property \Azuriom\Plugin\Vote\Models\Site $site
- * @property \Azuriom\Plugin\Vote\Models\Reward $reward
+ * @property \Azuriom\Plugin\Vote\Models\Site|null $site
+ * @property \Azuriom\Plugin\Vote\Models\Reward|null $reward
  *
  * @method static \Illuminate\Database\Eloquent\Builder enabled()
  */

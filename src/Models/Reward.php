@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $name
  * @property int $server_id
  * @property int $chances
- * @property int $money
+ * @property int|null $money
  * @property bool $need_online
  * @property array $commands
  * @property bool $is_enabled

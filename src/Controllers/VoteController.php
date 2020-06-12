@@ -128,7 +128,10 @@ class VoteController extends Controller
             return str_replace('{reward}', $reward->name, $el);
         }, $reward->commands ?? []);
 
-        $reward->server->bridge()->executeCommands($commands, $user->name, $reward->need_online);
+
+        if ($reward->server !== null) {
+            $reward->server->bridge()->executeCommands($commands, $user->name, $reward->need_online);
+        }
 
         return response()->json(['message' => trans('vote::messages.vote-success')]);
     }

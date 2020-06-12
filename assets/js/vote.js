@@ -1,4 +1,3 @@
-const voteNameForm = document.getElementById('voteNameForm');
 let voting = false;
 
 function toggleStep(step) {
@@ -21,34 +20,6 @@ function clearVoteAlert() {
 function displayVoteAlert(message, level) {
     document.getElementById('vote-alert').innerHTML = '<div class="alert alert-' + level + '" role="alert">' + message + '</div>';
 }
-
-voteNameForm.addEventListener('submit', function (ev) {
-    ev.preventDefault();
-
-    let tempUsername = document.getElementById('stepNameInput').value;
-    const loaderIcon = voteNameForm.querySelector('.load-spinner');
-
-    if (loaderIcon) {
-        loaderIcon.classList.remove('d-none');
-    }
-
-    clearVoteAlert();
-
-    axios.get(voteRoute + '/' + tempUsername)
-        .then(function (response) {
-            toggleStep(2);
-
-            username = tempUsername;
-        })
-        .catch(function (error) {
-            displayVoteAlert(error.response.data.message, 'danger');
-        })
-        .finally(function () {
-            if (loaderIcon) {
-                loaderIcon.classList.add('d-none');
-            }
-        });
-});
 
 document.querySelectorAll('[data-site-url]').forEach(function (el) {
     el.addEventListener('click', function (ev) {
@@ -81,6 +52,38 @@ document.querySelectorAll('[data-site-url]').forEach(function (el) {
         });
     });
 });
+
+const voteNameForm = document.getElementById('voteNameForm');
+
+if (voteNameForm) {
+    voteNameForm.addEventListener('submit', function (ev) {
+        ev.preventDefault();
+
+        let tempUsername = document.getElementById('stepNameInput').value;
+        const loaderIcon = voteNameForm.querySelector('.load-spinner');
+
+        if (loaderIcon) {
+            loaderIcon.classList.remove('d-none');
+        }
+
+        clearVoteAlert();
+
+        axios.get(voteRoute + '/' + tempUsername)
+            .then(function () {
+                toggleStep(2);
+
+                username = tempUsername;
+            })
+            .catch(function (error) {
+                displayVoteAlert(error.response.data.message, 'danger');
+            })
+            .finally(function () {
+                if (loaderIcon) {
+                    loaderIcon.classList.add('d-none');
+                }
+            });
+    });
+}
 
 function refreshVote(url) {
     setTimeout(function () {
