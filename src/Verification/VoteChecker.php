@@ -2,6 +2,7 @@
 
 namespace Azuriom\Plugin\Vote\Verification;
 
+use Azuriom\Models\User;
 use Azuriom\Plugin\Vote\Models\Site;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
@@ -71,10 +72,20 @@ class VoteChecker
             ->requireKey('secret')
             ->verifyByJson('hasVoted', true));
 
-        $this->register(VoteVerifier::for('liste-serveurs-minecraft.org')
-            ->setApiUrl('https://api.liste-serveurs-minecraft.org/vote/vote_verification.php?server_id={server}&ip={ip}&duration=5')
-            ->requireKey('server_id')
-            ->verifyByValue('1'));
+        $this->register(VoteVerifier::for('minecraft-mp.com')
+            ->setApiUrl('https://minecraft-mp.com/api/?object=votes&element=claim&key={server}&username={name}')
+            ->requireKey('api_key')
+            ->verifyByValue(1));
+
+        $this->register(VoteVerifier::for('gmod-servers.com')
+            ->setApiUrl('https://gmod-servers.com/api/?object=votes&element=claim&key={server}&steamid={id}')
+            ->requireKey('api_key')
+            ->verifyByValue(1));
+
+        $this->register(VoteVerifier::for('trackyserver.com')
+            ->setApiUrl('http://www.api.trackyserver.com/vote/?action=claim&key={server}&steamid={id}')
+            ->requireKey('api_key')
+            ->verifyByValue(1));
 
         $this->register(VoteVerifier::for('serveur-prive.net')
             ->setApiUrl('https://serveur-prive.net/api/vote/json/{server}/{ip}')
@@ -90,6 +101,11 @@ class VoteChecker
             ->setApiUrl('https://api.minecraft-top.com/v1/vote/{ip}/{server}')
             ->requireKey('token')
             ->verifyByJson('vote', 1));
+
+        $this->register(VoteVerifier::for('liste-serveurs-minecraft.org')
+            ->setApiUrl('https://api.liste-serveurs-minecraft.org/vote/vote_verification.php?server_id={server}&ip={ip}&duration=5')
+            ->requireKey('server_id')
+            ->verifyByValue('1'));
     }
 
     public function hasVerificationForSite(string $domain)
@@ -107,11 +123,11 @@ class VoteChecker
      * In case of failure or unsupported website true is returned.
      *
      * @param  Site  $site
-     * @param  string  $userIp
-     * @param  string  $userName
+     * @param  \Azuriom\Models\User  $user
+     * @param  string  $requestIp
      * @return bool
      */
-    public function verifyVote(Site $site, string $userIp, string $userName)
+    public function verifyVote(Site $site, User $user, string $requestIp)
     {
         $host = $this->parseHostFromUrl($site->url);
 
@@ -125,7 +141,7 @@ class VoteChecker
             return true;
         }
 
-        return $verification->verifyVote($site->url, $userIp, $userName, $site->verification_key);
+        return $verification->verifyVote($site->url, $user, $requestIp, $site->verification_key);
     }
 
     protected function register(VoteVerifier $verifier)

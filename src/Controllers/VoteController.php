@@ -106,7 +106,7 @@ class VoteController extends Controller
 
         $voteChecker = app(VoteChecker::class);
 
-        if ($site->has_verification && ! $voteChecker->verifyVote($site, $request->ip(), $user->name)) {
+        if ($site->has_verification && ! $voteChecker->verifyVote($site, $user, $request->ip())) {
             return response()->json([
                 'status' => 'pending',
             ]);

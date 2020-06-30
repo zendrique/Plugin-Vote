@@ -2,6 +2,7 @@
 
 namespace Azuriom\Plugin\Vote\Verification;
 
+use Azuriom\Models\User;
 use Closure;
 use Exception;
 use Illuminate\Http\Client\Response;
@@ -136,7 +137,7 @@ class VoteVerifier
         return $this;
     }
 
-    public function verifyVote(string $voteUrl, string $ip = '', string $username = '', string $voteKey = null)
+    public function verifyVote(string $voteUrl, User $user, string $ip = '', string $voteKey = null)
     {
         $retrieveKeyMethod = $this->retrieveKeyMethod;
         $verificationMethod = $this->verificationMethod;
@@ -147,7 +148,11 @@ class VoteVerifier
             return true;
         }
 
-        $url = str_replace(['{server}', '{ip}', '{player}'], [$key, $ip, $username], $this->apiUrl);
+        $url = str_replace([
+            '{server}', '{ip}', '{id}', '{name}'
+        ], [
+            $key, $ip, $user->game_id, $user->name,
+        ], $this->apiUrl);
 
         try {
             $response = Http::get($url);

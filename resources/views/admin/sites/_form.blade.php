@@ -64,7 +64,7 @@
                     <label class="custom-control-label" for="rewards{{ $reward->id }}">{{ $reward->name }}</label>
                 </div>
             @empty
-                <a href="{{ route('vote.admin.rewards.create') }}" class="btn btn-success btn-sm" target="_blank"><i class="fas fa-plus"></i> {{ trans('messages.actions.add') }}
+                <a href="{{ route('vote.admin.rewards.create') }}" class="btn btn-success btn-sm" target="_blank" rel="noopener noreferrer"><i class="fas fa-plus"></i> {{ trans('messages.actions.add') }}
                 </a>
             @endforelse
         </div>

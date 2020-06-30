@@ -101,7 +101,7 @@ function refreshVote(url) {
         }).catch(function (error) {
             document.getElementById('vote-spinner').classList.add('d-none');
 
-            displayVoteAlert(error.response.data.message, 'danger');
+            displayVoteAlert(error.response.data.message ? error.response.data.message : error, 'danger');
         });
     }, 5000);
 }
