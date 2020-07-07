@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  *
- * @property \Azuriom\Models\Server $server
+ * @property \Azuriom\Models\Server|null $server
  * @property \Illuminate\Support\Collection|\Azuriom\Plugin\Vote\Models\Vote[] $votes
  *
  * @method static \Illuminate\Database\Eloquent\Builder enabled()
