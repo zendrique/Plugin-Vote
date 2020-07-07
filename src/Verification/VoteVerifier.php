@@ -149,7 +149,7 @@ class VoteVerifier
         }
 
         $url = str_replace([
-            '{server}', '{ip}', '{id}', '{name}'
+            '{server}', '{ip}', '{id}', '{name}',
         ], [
             $key, $ip, $user->game_id, $user->name,
         ], $this->apiUrl);
