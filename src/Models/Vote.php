@@ -4,7 +4,9 @@ namespace Azuriom\Plugin\Vote\Models;
 
 use Azuriom\Models\Traits\HasTablePrefix;
 use Azuriom\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 /**
  * @property int $id
@@ -64,5 +66,31 @@ class Vote extends Model
     public function reward()
     {
         return $this->belongsTo(Reward::class);
+    }
+
+    public static function getTopVoters(Carbon $fromDate, Carbon $toDate = null)
+    {
+        $votes = static::getRawTopVoters($fromDate, $toDate);
+
+        $users = User::findMany($votes->pluck('user_id'))->keyBy('id');
+
+        return $votes->mapWithKeys(function ($vote, $position) use ($users) {
+            return [
+                $position + 1 => [
+                    'user' => $users->get($vote->user_id),
+                    'votes' => $vote->count,
+                ],
+            ];
+        });
+    }
+
+    public static function getRawTopVoters(Carbon $fromDate, Carbon $toDate = null)
+    {
+       return self::select(['user_id', DB::raw('count(*) as count')])
+            ->whereBetween('created_at', [$fromDate, $toDate ?? now()])
+            ->groupBy('user_id')
+            ->orderByDesc('count')
+            ->take(setting('vote.top-players-count', 10))
+            ->get();
     }
 }

@@ -21,4 +21,5 @@ Route::middleware('can:vote.admin')->group(function () {
 
     Route::resource('sites', 'SiteController')->except('show');
     Route::resource('rewards', 'RewardController')->except('show');
+    Route::resource('votes', 'VoteController')->only('index');
 });

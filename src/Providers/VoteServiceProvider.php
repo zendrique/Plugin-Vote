@@ -69,6 +69,7 @@ class VoteServiceProvider extends BasePluginServiceProvider
                     'vote.admin.settings' => 'vote::admin.nav.settings',
                     'vote.admin.sites.index' => 'vote::admin.nav.sites',
                     'vote.admin.rewards.index' => 'vote::admin.nav.rewards',
+                    'vote.admin.votes.index' => 'vote::admin.nav.votes',
                 ],
             ],
         ];

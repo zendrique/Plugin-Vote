@@ -7,6 +7,7 @@ return [
         'settings' => 'Settings',
         'sites' => 'Sites',
         'rewards' => 'Rewards',
+        'votes' => 'Votes',
     ],
 
     'permission' => 'View and manage vote plugin',
@@ -62,5 +63,11 @@ return [
             'updated' => 'This reward has been updated.',
             'deleted' => 'This reward has been deleted.',
         ],
+    ],
+
+    'votes' => [
+        'title' => 'Votes',
+
+        'empty' => 'No votes this month.',
     ],
 ];

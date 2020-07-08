@@ -7,6 +7,7 @@ return [
         'settings' => 'Paramètres',
         'sites' => 'Sites',
         'rewards' => 'Récompenses',
+        'votes' => 'Votes',
     ],
 
     'permission' => 'Voir et gérer le plugin vote',
@@ -62,5 +63,11 @@ return [
             'updated' => 'La récompense a été mise à jour.',
             'deleted' => 'La récompense a été supprimée.',
         ],
+    ],
+
+    'votes' => [
+        'title' => 'Votes',
+
+        'empty' => 'Pas de votes ce mois-ci.',
     ],
 ];

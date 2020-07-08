@@ -9,7 +9,6 @@ use Azuriom\Plugin\Vote\Models\Site;
 use Azuriom\Plugin\Vote\Models\Vote;
 use Azuriom\Plugin\Vote\Verification\VoteChecker;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class VoteController extends Controller
 {
@@ -20,29 +19,10 @@ class VoteController extends Controller
      */
     public function index()
     {
-        $votes = DB::table((new Vote())->getTable())
-            ->select(['user_id', DB::raw('COUNT(user_id) AS count')])
-            ->where('created_at', '>', now()->startOfMonth())
-            ->groupBy('user_id')
-            ->orderByDesc('count')
-            ->take(setting('vote.top-players-count', 10))
-            ->get();
-
-        $users = User::findMany($votes->pluck('user_id'))->keyBy('id');
-
-        $votes = $votes->mapWithKeys(function ($vote, $position) use ($users) {
-            return [
-                $position + 1 => [
-                    'user' => $users->get($vote->user_id),
-                    'votes' => $vote->count,
-                ],
-            ];
-        });
-
         return view('vote::index', [
             'sites' => Site::enabled()->whereHas('rewards')->get(),
             'rewards' => Reward::orderByDesc('chances')->get(),
-            'votes' => $votes,
+            'votes' => Vote::getTopVoters(now()->startOfMonth()),
         ]);
     }
 
