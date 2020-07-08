@@ -5,8 +5,6 @@ namespace Azuriom\Plugin\Vote\Controllers\Admin;
 use Azuriom\Http\Controllers\Controller;
 use Azuriom\Models\User;
 use Azuriom\Plugin\Vote\Models\Vote;
-use Carbon\CarbonImmutable;
-use Illuminate\Support\Facades\DB;
 
 class VoteController extends Controller
 {
@@ -27,7 +25,7 @@ class VoteController extends Controller
         }
 
         $users = User::findMany($votes->flatMap(function ($votes) {
-            return  $votes->pluck('user_id');
+            return $votes->pluck('user_id');
         })->unique())->keyBy('id');
 
         $votes = $votes->map(function ($voteValues) use ($users) {

@@ -86,7 +86,7 @@ class Vote extends Model
 
     public static function getRawTopVoters(Carbon $fromDate, Carbon $toDate = null)
     {
-       return self::select(['user_id', DB::raw('count(*) as count')])
+        return self::select(['user_id', DB::raw('count(*) as count')])
             ->whereBetween('created_at', [$fromDate, $toDate ?? now()])
             ->groupBy('user_id')
             ->orderByDesc('count')

@@ -21,8 +21,6 @@ class CreateVoteVotesTable extends Migration
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('site_id')->references('id')->on('vote_sites')->onDelete('cascade');
-            $table->foreign('reward_id')->references('id')->on('vote_rewards')->onDelete('cascade');
         });
     }
 

@@ -23,8 +23,6 @@ class CreateVoteRewardsTable extends Migration
             $table->boolean('need_online')->default(false);
             $table->boolean('is_enabled')->default(true);
             $table->timestamps();
-
-            $table->foreign('server_id')->references('id')->on('servers')->onDelete('cascade');
         });
 
         Schema::create('vote_reward_site', function (Blueprint $table) {

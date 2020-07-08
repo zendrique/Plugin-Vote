@@ -13,14 +13,18 @@ class RemoveForeignKeysFromVotesTables extends Migration
      */
     public function up()
     {
-        Schema::table('vote_rewards', function (Blueprint $table) {
-            $table->dropForeign(['server_id']);
-        });
+        try {
+            Schema::table('vote_rewards', function (Blueprint $table) {
+                $table->dropForeign(['server_id']);
+            });
 
-        Schema::table('vote_votes', function (Blueprint $table) {
-            $table->dropForeign(['site_id']);
-            $table->dropForeign(['reward_id']);
-        });
+            Schema::table('vote_votes', function (Blueprint $table) {
+                $table->dropForeign(['site_id']);
+                $table->dropForeign(['reward_id']);
+            });
+        } catch (Exception $e) {
+            // ignore, SQLite doesn't support dropping foreign keys.
+        }
     }
 
     /**
@@ -30,13 +34,6 @@ class RemoveForeignKeysFromVotesTables extends Migration
      */
     public function down()
     {
-        Schema::create('vote_rewards', function (Blueprint $table) {
-            $table->foreign('server_id')->references('id')->on('servers')->onDelete('cascade');
-        });
-
-        Schema::table('vote_votes', function (Blueprint $table) {
-            $table->foreign('site_id')->references('id')->on('vote_sites')->onDelete('cascade');
-            $table->foreign('reward_id')->references('id')->on('vote_rewards')->onDelete('cascade');
-        });
+        //
     }
 }
