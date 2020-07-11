@@ -20,7 +20,7 @@ class VoteController extends Controller
     public function index()
     {
         return view('vote::index', [
-            'sites' => Site::enabled()->whereHas('rewards')->get(),
+            'sites' => Site::enabled()->get(),
             'rewards' => Reward::orderByDesc('chances')->get(),
             'votes' => Vote::getTopVoters(now()->startOfMonth()),
         ]);
@@ -41,15 +41,13 @@ class VoteController extends Controller
     {
         $user = $request->user() ?? User::firstWhere('name', $request->input('user'));
 
-        if ($user === null) {
-            abort(401);
-        }
+        abort_if($user === null, 401);
 
-        $nextVoteTime = $this->getNextVoteTime($site, $user);
+        $nextVoteTime = $site->getNextVoteTime($user);
 
         if ($nextVoteTime !== null) {
             return response()->json([
-                'message' => trans('vote::messages.vote-delay', ['time' => $nextVoteTime]),
+                'message' => trans('vote::messages.vote-delay', ['time' => $nextVoteTime->diffForHumans()]),
             ], 422);
         }
 
@@ -66,15 +64,13 @@ class VoteController extends Controller
     {
         $user = $request->user() ?? User::firstWhere('name', $request->input('user'));
 
-        if ($user === null) {
-            abort(401);
-        }
+        abort_if($user === null, 401);
 
-        $nextVoteTime = $this->getNextVoteTime($site, $user);
+        $nextVoteTime = $site->getNextVoteTime($user);
 
         if ($nextVoteTime !== null) {
             return response()->json([
-                'message' => trans('vote::messages.vote-delay', ['time' => $nextVoteTime]),
+                'message' => trans('vote::messages.vote-delay', ['time' => $nextVoteTime->diffForHumans()]),
             ], 422);
         }
 
@@ -92,61 +88,17 @@ class VoteController extends Controller
             ]);
         }
 
-        $reward = $this->getRandomReward($site);
+        $reward = $site->getRandomReward();
 
-        $site->votes()->create([
-            'user_id' => $user->id,
-            'reward_id' => $reward->id,
-        ]);
+        if ($reward !== null) {
+            $site->votes()->create([
+                'user_id' => $user->id,
+                'reward_id' => $reward->id,
+            ]);
 
-        if ($reward->money > 0) {
-            $user->addMoney($reward->money);
-            $user->save();
-        }
-
-        $commands = array_map(function ($el) use ($reward) {
-            return str_replace('{reward}', $reward->name, $el);
-        }, $reward->commands ?? []);
-
-        if ($reward->server !== null) {
-            $reward->server->bridge()->executeCommands($commands, $user->name, $reward->need_online);
+            $reward->giveTo($user);
         }
 
         return response()->json(['message' => trans('vote::messages.vote-success')]);
-    }
-
-    private function getNextVoteTime(Site $site, User $user)
-    {
-        $lastVoteTime = $site->votes()
-            ->where('user_id', $user->id)
-            ->where('created_at', '>', now()->subMinutes($site->vote_delay))
-            ->latest()
-            ->value('created_at');
-
-        if ($lastVoteTime === null) {
-            return null;
-        }
-
-        return $lastVoteTime->addMinutes($site->vote_delay)->diffForHumans();
-    }
-
-    private function getRandomReward(Site $site)
-    {
-        $rewards = $site->rewards;
-
-        $total = $rewards->sum('chances');
-        $random = random_int(0, $total);
-
-        $sum = 0;
-
-        foreach ($rewards as $reward) {
-            $sum += $reward->chances;
-
-            if ($sum >= $random) {
-                return $reward;
-            }
-        }
-
-        return $rewards->first();
     }
 }

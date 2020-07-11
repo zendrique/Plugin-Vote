@@ -4,6 +4,7 @@ namespace Azuriom\Plugin\Vote\Models;
 
 use Azuriom\Models\Server;
 use Azuriom\Models\Traits\HasTablePrefix;
+use Azuriom\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
@@ -67,6 +68,22 @@ class Reward extends Model
     public function server()
     {
         return $this->belongsTo(Server::class);
+    }
+
+    public function giveTo(User $user)
+    {
+        if ($this->money > 0) {
+            $user->addMoney($this->money);
+            $user->save();
+        }
+
+        $commands = array_map(function ($el) {
+            return str_replace('{reward}', $this->name, $el);
+        }, $this->commands ?? []);
+
+        if ($this->server !== null) {
+            $this->server->bridge()->executeCommands($commands, $user->name, $this->need_online);
+        }
     }
 
     /**
