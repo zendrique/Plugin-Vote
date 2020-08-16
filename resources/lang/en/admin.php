@@ -56,7 +56,7 @@ return [
         'need-online' => 'The user must be online to receive the reward (only available with AzLink)',
         'enable' => 'Enable the reward',
 
-        'commands-info' => 'You can use <code>{player}</code> to use the player name and <code>{reward}</code> to use the reward name.',
+        'commands-info' => 'You can use <code>{player}</code> to use the player name and <code>{reward}</code> to use the reward name. The command must not start with <code>/</code>',
 
         'status' => [
             'created' => 'The reward has been created.',

@@ -43,16 +43,6 @@ class Vote extends Model
         'user_id', 'reward_id',
     ];
 
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'has_verification' => 'boolean',
-        'is_enabled' => 'boolean',
-    ];
-
     public function user()
     {
         return $this->belongsTo(User::class);
