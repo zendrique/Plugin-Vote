@@ -20,7 +20,7 @@ return [
     'unknown-user' => 'This user don\'t exists !',
 
     'no-site' => 'No voting site is available at the moment.',
-    'vote-delay' => 'You already voted, you can vote again :time !',
+    'vote-delay' => 'You already voted, you can vote again in :time !',
     'site-no-rewards' => 'This site has no rewards.',
     'vote-success' => 'Your vote has been taken into account, you will receive your rewards soon!',
 ];

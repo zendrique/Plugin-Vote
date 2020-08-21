@@ -22,6 +22,7 @@
                     </button>
                 </form>
             </div>
+
             <div class="@guest d-none @endguest h-100" data-vote-step="2">
                 <div id="vote-spinner" class="d-none h-100">
                     <div class="spinner-border text-white" role="status"></div>

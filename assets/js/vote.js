@@ -21,10 +21,6 @@ function displayVoteAlert(message, level) {
 
 document.querySelectorAll('[data-site-url]').forEach(function (el) {
     el.addEventListener('click', function (ev) {
-        if (voting === true) {
-            return;
-        }
-
         ev.preventDefault();
 
         if (el.classList.contains('disabled')) {

@@ -27,8 +27,7 @@ class AddVerificationsColumnsToVoteSitesTable extends Migration
     public function down()
     {
         Schema::table('vote_sites', function (Blueprint $table) {
-            $table->dropColumn('verification_key');
-            $table->dropColumn('has_verification');
+            $table->dropColumn(['verification_key', 'has_verification']);
         });
     }
 }

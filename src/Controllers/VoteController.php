@@ -8,6 +8,7 @@ use Azuriom\Plugin\Vote\Models\Reward;
 use Azuriom\Plugin\Vote\Models\Site;
 use Azuriom\Plugin\Vote\Models\Vote;
 use Azuriom\Plugin\Vote\Verification\VoteChecker;
+use Carbon\CarbonInterface;
 use Illuminate\Http\Request;
 
 class VoteController extends Controller
@@ -46,8 +47,14 @@ class VoteController extends Controller
         $nextVoteTime = $site->getNextVoteTime($user);
 
         if ($nextVoteTime !== null) {
+            $formattedTime = $nextVoteTime->diffForHumans([
+                'parts' => 2,
+                'join' => true,
+                'syntax' => CarbonInterface::DIFF_ABSOLUTE,
+            ]);
+
             return response()->json([
-                'message' => trans('vote::messages.vote-delay', ['time' => $nextVoteTime->diffForHumans()]),
+                'message' => trans('vote::messages.vote-delay', ['time' => $formattedTime]),
             ], 422);
         }
 
@@ -69,8 +76,14 @@ class VoteController extends Controller
         $nextVoteTime = $site->getNextVoteTime($user);
 
         if ($nextVoteTime !== null) {
+            $formattedTime = $nextVoteTime->diffForHumans([
+                'parts' => 2,
+                'join' => true,
+                'syntax' => CarbonInterface::DIFF_ABSOLUTE,
+            ]);
+
             return response()->json([
-                'message' => trans('vote::messages.vote-delay', ['time' => $nextVoteTime->diffForHumans()]),
+                'message' => trans('vote::messages.vote-delay', ['time' => $formattedTime]),
             ], 422);
         }
 
