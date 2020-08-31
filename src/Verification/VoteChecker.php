@@ -77,10 +77,20 @@ class VoteChecker
             ->requireKey('api_key')
             ->verifyByValue(1));
 
-        $this->register(VoteVerifier::for('gmod-servers.com')
-            ->setApiUrl('https://gmod-servers.com/api/?object=votes&element=claim&key={server}&steamid={id}')
-            ->requireKey('api_key')
-            ->verifyByValue(1));
+        $listForge = [
+            'gmod-servers.com',
+            'ark-servers.net',
+            'rust-servers.net',
+            'tf2-servers.com',
+            'counter-strike-servers.net',
+        ];
+
+        foreach ($listForge as $domain) {
+            $this->register(VoteVerifier::for($domain)
+                ->setApiUrl("https://{$domain}/api/?object=votes&element=claim&key={server}&steamid={id}")
+                ->requireKey('api_key')
+                ->verifyByValue(1));
+        }
 
         $this->register(VoteVerifier::for('trackyserver.com')
             ->setApiUrl('http://www.api.trackyserver.com/vote/?action=claim&key={server}&steamid={id}')
