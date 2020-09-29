@@ -62,6 +62,11 @@ class VoteChecker
             ->retrieveKeyByRegex('/^liste-serveurs\.fr\/[\w\d-]+\.(\d+)/', 2)
             ->verifyByJson('success', true));
 
+        $this->register(VoteVerifier::for('serveur-top.fr')
+            ->setApiUrl('https://serveur-top.fr/api/checkVote/{server}/{ip}')
+            ->retrieveKeyByRegex('/^serveur-top\.fr\/[\w\d-]+\.(\d+)/', 2)
+            ->verifyByJson('success', true));
+
         $this->register(VoteVerifier::for('liste-minecraft-serveurs.com')
             ->setApiUrl('https://www.liste-minecraft-serveurs.com/Api/Worker/id_server/{server}/ip/{ip}')
             ->retrieveKeyByRegex('/^liste-minecraft-serveurs\.com\/Serveur\/(\d+)/', 2)
