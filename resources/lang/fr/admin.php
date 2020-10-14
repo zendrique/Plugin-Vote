@@ -69,5 +69,11 @@ return [
         'title' => 'Votes',
 
         'empty' => 'Pas de votes ce mois-ci.',
+
+        'votes' => 'Nombre de votes',
+
+        'month' => 'Nombre de votes ce mois-ci',
+        'week' => 'Nombre de votes cette semaine',
+        'day' => 'Nombre de votes aujourd\'hui',
     ],
 ];

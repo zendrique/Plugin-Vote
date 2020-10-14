@@ -5,6 +5,7 @@ namespace Azuriom\Plugin\Vote\Controllers\Admin;
 use Azuriom\Http\Controllers\Controller;
 use Azuriom\Models\User;
 use Azuriom\Plugin\Vote\Models\Vote;
+use Azuriom\Support\Charts;
 
 class VoteController extends Controller
 {
@@ -41,6 +42,14 @@ class VoteController extends Controller
 
         return view('vote::admin.votes', [
             'votes' => $votes,
+
+            'votesCount' => Vote::count(),
+            'votesCountMonth' => Vote::where('created_at', now()->startOfMonth())->count(),
+            'votesCountWeek' => Vote::where('created_at', now()->startOfWeek())->count(),
+            'votesCountDay' => Vote::where('created_at', today())->count(),
+            'votesPerMonths' => Charts::countByMonths(Vote::query()),
+            'votesPerDays' => Charts::countByDays(Vote::query()),
+
             'now' => now()->format('m/Y'),
         ]);
     }
