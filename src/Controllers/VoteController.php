@@ -10,6 +10,7 @@ use Azuriom\Plugin\Vote\Models\Vote;
 use Azuriom\Plugin\Vote\Verification\VoteChecker;
 use Carbon\CarbonInterface;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class VoteController extends Controller
 {
@@ -44,7 +45,7 @@ class VoteController extends Controller
 
         abort_if($user === null, 401);
 
-        $nextVoteTime = $site->getNextVoteTime($user);
+        $nextVoteTime = $site->getNextVoteTime($user, $request);
 
         if ($nextVoteTime !== null) {
             $formattedTime = $nextVoteTime->diffForHumans([
@@ -73,7 +74,7 @@ class VoteController extends Controller
 
         abort_if($user === null, 401);
 
-        $nextVoteTime = $site->getNextVoteTime($user);
+        $nextVoteTime = $site->getNextVoteTime($user, $request);
 
         if ($nextVoteTime !== null) {
             $formattedTime = $nextVoteTime->diffForHumans([
@@ -100,6 +101,9 @@ class VoteController extends Controller
                 'status' => 'pending',
             ]);
         }
+
+        $next = now()->addMinutes($site->vote_delay);
+        Cache::put('votes.site.'.$site->id.'.'.$request->ip(), $next, $next);
 
         $reward = $site->getRandomReward();
 

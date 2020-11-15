@@ -70,7 +70,7 @@
     <label for="moneyInput">{{ trans('messages.fields.money') }}</label>
 
     <div class="input-group">
-        <input type="text" class="form-control @error('money') is-invalid @enderror" id="moneyInput" name="money" value="{{ old('money', $reward->money ?? '') }}" required>
+        <input type="text" class="form-control @error('money') is-invalid @enderror" id="moneyInput" name="money" value="{{ old('money', $reward->money ?? '') }}">
         <div class="input-group-append">
             <div class="input-group-text">{{ money_name() }}</div>
         </div>

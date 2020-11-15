@@ -29,7 +29,7 @@ return [
         'delay' => 'Délai entre chaque vote',
         'minutes' => 'minutes',
 
-        'no-verification' => 'Les votes sur ce site ne seront pas être vérifiés.',
+        'no-verification' => 'Les votes sur ce site ne seront pas vérifiés.',
         'auto-verification' => 'Les votes sur ce site seront automatiquement vérifiés.',
         'key-verification' => 'Les votes sur ce site seront vérifiés quand le champ ci-dessous est rempli.',
 
@@ -56,7 +56,7 @@ return [
         'need-online' => 'L\'utilisateur doit être en ligne pour recevoir la récompense (uniquement disponible avec AzLink)',
         'enable' => 'Activer la récompense',
 
-        'commands-info' => 'Vous pouvez utiliser <code>{player}</code> pour utiliser le nom du joueur et <code>{reward}</code> pour utiliser le nom de la récompense. La commande ne doit pas contenir de <code>/</code> au début.',
+        'commands-info' => 'Vous pouvez utiliser <code>{player}</code> pour utiliser le nom du joueur et <code>{reward}</code> pour utiliser le nom de la récompense.',
 
         'status' => [
             'created' => 'La récompense a été créée.',
