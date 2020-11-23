@@ -5,7 +5,9 @@ namespace Azuriom\Plugin\Vote\Verification;
 use Azuriom\Models\User;
 use Azuriom\Plugin\Vote\Models\Site;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
 class VoteChecker
@@ -131,6 +133,17 @@ class VoteChecker
             ->setApiUrl('https://api.liste-serveurs-minecraft.org/vote/vote_verification.php?server_id={server}&ip={ip}&duration=5')
             ->requireKey('server_id')
             ->verifyByValue('1'));
+
+        $this->register(VoteVerifier::for('gtop100.com')
+            ->retrieveKeyByRegex('/(?<=\/sitedetails\/)(.*)(?=\?vote=1)/')
+            ->verifyByPingback(function (Request $request) {
+                abort_if(! in_array($request->ip(), ['198.148.82.98', '198.148.82.99']), 403);
+
+                if ($request->input('Successful') === '0') {
+                    Cache::put("vote.sites.gtop100.com.{$request->input('VoterIp')}", true, now()->addMinutes(5));
+                }
+            })
+        );
     }
 
     public function hasVerificationForSite(string $domain)
@@ -189,5 +202,12 @@ class VoteChecker
         }
 
         return $host;
+    }
+
+    public function hasPingback(string $domain)
+    {
+        $verifier = $this->getVerificationForSite($domain);
+
+        return $verifier !== null && $verifier->usePingback();
     }
 }

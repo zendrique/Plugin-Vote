@@ -6,7 +6,9 @@ use Azuriom\Models\User;
 use Closure;
 use Exception;
 use Illuminate\Http\Client\Response;
+use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
@@ -32,6 +34,13 @@ class VoteVerifier
      * @var string|callable
      */
     private $verificationMethod;
+
+    /**
+     * The method to handle websites pingback.
+     *
+     * @var callable|null
+     */
+    private $pingbackCallback;
 
     /**
      * The method to retrieve the server id from the vote url.
@@ -137,6 +146,29 @@ class VoteVerifier
         return $this;
     }
 
+    public function verifyByPingback(callable $callback)
+    {
+        $this->pingbackCallback = $callback;
+
+        $this->verificationMethod = function (string $ip) {
+            $ping = Cache::pull("vote.sites.{$this->siteDomain}.{$ip}");
+
+            return $ping === true;
+        };
+
+        return $this;
+    }
+
+    public function executePingbackCallback(Request $request)
+    {
+        return ($this->pingbackCallback)($request);
+    }
+
+    public function usePingback()
+    {
+        return $this->pingbackCallback !== null;
+    }
+
     public function verifyVote(string $voteUrl, User $user, string $ip = '', string $voteKey = null)
     {
         $retrieveKeyMethod = $this->retrieveKeyMethod;
@@ -155,6 +187,10 @@ class VoteVerifier
         ], $this->apiUrl);
 
         try {
+            if ($this->apiUrl === null) {
+                return $verificationMethod($ip);
+            }
+
             $response = Http::get($url);
 
             return $verificationMethod($response);
