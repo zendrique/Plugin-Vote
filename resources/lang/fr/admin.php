@@ -10,13 +10,16 @@ return [
         'votes' => 'Votes',
     ],
 
-    'permission' => 'Voir et gérer le plugin vote',
+    'permission' => 'Gérer le plugin vote',
 
     'settings' => [
         'title' => 'Paramètres de la page de vote',
 
         'count' => 'Nombre de joueurs dans le classement',
         'display-rewards' => 'Afficher les récompenses sur la page de vote',
+        'ip-compatibility' => 'Activer la compatibilité IPv6',
+        'ip-compatibility-info' => 'Cette option permet de corriger les votes qui ne se vérifient pas sur les sites de vote n\'acceptent pas l\'IPv6 alors que votre site oui, ou inversement.',
+        'commands' => 'Commandes globales',
     ],
 
     'sites' => [
@@ -37,6 +40,7 @@ return [
             'enable' => 'Activer la vérification des votes',
 
             'pingback' => 'URL de pingback: :url',
+            'secret' => 'Clé secrete',
             'server_id' => 'ID du serveur',
             'token' => 'Token',
             'api_key' => 'Clé d\'API',
@@ -57,7 +61,7 @@ return [
         'need-online' => 'L\'utilisateur doit être en ligne pour recevoir la récompense (uniquement disponible avec AzLink)',
         'enable' => 'Activer la récompense',
 
-        'commands-info' => 'Vous pouvez utiliser <code>{player}</code> pour utiliser le nom du joueur et <code>{reward}</code> pour utiliser le nom de la récompense.',
+        'commands-info' => 'Vous pouvez utiliser <code>{player}</code> pour utiliser le nom du joueur et <code>{reward}</code> pour utiliser le nom de la récompense. La commande ne doit pas contenir de <code>/</code> au début.',
 
         'status' => [
             'created' => 'La récompense a été créée.',

@@ -135,15 +135,14 @@ class VoteChecker
             ->verifyByValue('1'));
 
         $this->register(VoteVerifier::for('gtop100.com')
-            ->retrieveKeyByRegex('/(?<=\/sitedetails\/)(.*)(?=\?vote=1)/')
+            ->retrieveKeyByRegex('/^gtop100\.com\/topsites\/[\w\d-]+\/sitedetails\/[\w\d-]+\-(\d+)/')
             ->verifyByPingback(function (Request $request) {
-                abort_if(! in_array($request->ip(), ['198.148.82.98', '198.148.82.99']), 403);
+                abort_if(! in_array($request->ip(), ['198.148.82.98', '198.148.82.99'], true), 403);
 
                 if ($request->input('Successful') === '0') {
                     Cache::put("vote.sites.gtop100.com.{$request->input('VoterIp')}", true, now()->addMinutes(5));
                 }
-            })
-        );
+            }));
     }
 
     public function hasVerificationForSite(string $domain)
@@ -202,12 +201,5 @@ class VoteChecker
         }
 
         return $host;
-    }
-
-    public function hasPingback(string $domain)
-    {
-        $verifier = $this->getVerificationForSite($domain);
-
-        return $verifier !== null && $verifier->usePingback();
     }
 }

@@ -164,12 +164,12 @@ class VoteVerifier
         return ($this->pingbackCallback)($request);
     }
 
-    public function usePingback()
+    public function hasPingback()
     {
         return $this->pingbackCallback !== null;
     }
 
-    public function verifyVote(string $voteUrl, User $user, string $ip = '', string $voteKey = null)
+    public function verifyVote(string $voteUrl, User $user, string $requestIp = '', string $voteKey = null)
     {
         $retrieveKeyMethod = $this->retrieveKeyMethod;
         $verificationMethod = $this->verificationMethod;
@@ -180,20 +180,32 @@ class VoteVerifier
             return true;
         }
 
-        $url = str_replace([
-            '{server}', '{ip}', '{id}', '{name}',
-        ], [
-            $key, $ip, $user->game_id, $user->name,
-        ], $this->apiUrl);
-
         try {
-            if ($this->apiUrl === null) {
-                return $verificationMethod($ip);
+            $ips = $this->getRequestIps($requestIp);
+
+            if ($ips === null || empty($ips)) {
+                $ips = [$requestIp];
             }
 
-            $response = Http::get($url);
+            foreach ($ips as $ip) {
+                if ($this->apiUrl === null) {
+                    return $verificationMethod($ip);
+                }
 
-            return $verificationMethod($response);
+                $url = str_replace([
+                    '{server}', '{ip}', '{id}', '{name}',
+                ], [
+                    $key, $ip, $user->game_id, $user->name,
+                ], $this->apiUrl);
+
+                $response = Http::get($url);
+
+                if ($verificationMethod($response)) {
+                    return true;
+                }
+            }
+
+            return false;
         } catch (Exception $e) {
             return true;
         }
@@ -212,5 +224,18 @@ class VoteVerifier
     public function getSiteDomain()
     {
         return $this->siteDomain;
+    }
+
+    protected function getRequestIps(string $requestIp)
+    {
+        if (! setting('vote.ipv4-v6-compatibility')) {
+            return null;
+        }
+
+        try {
+            return Http::get('https://ipv6-adapter.com/api/v1/fetch?ip='.$requestIp)->json('ips');
+        } catch (Exception $e) {
+            return null;
+        }
     }
 }

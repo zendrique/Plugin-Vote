@@ -4,6 +4,7 @@ namespace Azuriom\Plugin\Vote\Requests;
 
 use Azuriom\Http\Requests\Traits\ConvertCheckbox;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Arr;
 use Illuminate\Validation\Rule;
 
 class RewardRequest extends FormRequest
@@ -44,8 +45,14 @@ class RewardRequest extends FormRequest
      */
     public function validated()
     {
-        $commands = array_filter($this->input('commands', []));
+        $validated = parent::validated();
 
-        return ['commands' => $commands] + $this->validator->validated();
+        $validated['commands'] = array_filter(Arr::get($validated, 'commands', []));
+
+        if (Arr::get($validated, 'money') === null) {
+            $validated['money'] = 0;
+        }
+
+        return $validated;
     }
 }

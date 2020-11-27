@@ -10,13 +10,16 @@ return [
         'votes' => 'Votes',
     ],
 
-    'permission' => 'View and manage vote plugin',
+    'permission' => 'Manage vote plugin',
 
     'settings' => [
         'title' => 'Vote page settings',
 
         'count' => 'Top Players Count',
         'display-rewards' => 'Show rewards in vote page',
+        'ip-compatibility' => 'Enable IPv4/IPv6 compatibility',
+        'ip-compatibility-info' => 'This option allows you to correct votes that are not verified on voting sites that don\'t accept IPv6 while your site does, or vice versa.',
+        'commands' => 'Global commands',
     ],
 
     'sites' => [
@@ -37,6 +40,7 @@ return [
             'enable' => 'Enable votes verification',
 
             'pingback' => 'Pingback URL: :url',
+            'secret' => 'Secret key',
             'server_id' => 'Server ID',
             'token' => 'Token',
             'api_key' => 'API key',

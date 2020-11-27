@@ -21,6 +21,20 @@
                     </div>
                 </div>
 
+                <div class="form-group">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="ipCompatibility" name="ip-compatibility" @if($ipCompatibility) checked @endif aria-describedby="ipCompatibilityLabel">
+                        <label class="custom-control-label" for="ipCompatibility">{{ trans('vote::admin.settings.ip-compatibility') }}</label>
+                    </div>
+                    <small id="ipCompatibilityLabel" class="form-text">{{ trans('vote::admin.settings.ip-compatibility-info') }}</small>
+                </div>
+
+                <div class="form-group">
+                    <label>{{ trans('vote::admin.settings.commands') }}</label>
+
+                    @include('vote::admin.elements.commands', ['commands' => $commands])
+                </div>
+
                 <button type="submit" class="btn btn-primary">
                     <i class="fas fa-save"></i> {{ trans('messages.actions.save') }}
                 </button>

@@ -77,11 +77,17 @@ class Reward extends Model
             $user->save();
         }
 
+        $commands = $this->commands ?? [];
+
+        if ($globalCommands = setting('vote.commands')) {
+            $commands = array_merge($commands, json_decode($globalCommands));
+        }
+
         $commands = array_map(function ($el) {
             return str_replace('{reward}', $this->name, $el);
-        }, $this->commands ?? []);
+        }, $commands);
 
-        if ($this->server !== null) {
+        if ($this->server !== null && ! empty($commands)) {
             $this->server->bridge()->executeCommands($commands, $user->name, $this->need_online);
         }
     }

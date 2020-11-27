@@ -90,10 +90,10 @@ class SiteController extends Controller
         $verifier = $checker->getVerificationForSite($host);
 
         if (! $verifier->requireVerificationKey()) {
-            $message = trans('vote::admin.sites.auto-verification');
+            $message = trans('vote::admin.sites.auto-verification').' ';
 
-            if ($checker->hasPingback($host)) {
-                $message .= ' '.trans('vote::admin.sites.verifications.pingback', [
+            if ($verifier->hasPingback()) {
+                $message .= trans('vote::admin.sites.verifications.pingback', [
                     'url' => route('vote.api.sites.pingback', $host),
                 ]);
             }

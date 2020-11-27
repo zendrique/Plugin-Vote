@@ -15,8 +15,12 @@ class SettingController extends Controller
      */
     public function show()
     {
+        $commands = setting('vote.commands');
+
         return view('vote::admin.settings', [
             'topPlayersCount' => setting('vote.top-players-count', 10),
+            'ipCompatibility' => setting('vote.ipv4-v6-compatibility'),
+            'commands' => $commands ? json_decode($commands) : [],
         ]);
     }
 
@@ -30,10 +34,19 @@ class SettingController extends Controller
      */
     public function save(Request $request)
     {
-        Setting::updateSettings('vote.top-players-count', $this->validate($request, [
+        $validated = $this->validate($request, [
             'top-players-count' => ['numeric', 'min:1'],
-        ])['top-players-count']);
-        Setting::updateSettings('vote.display-rewards', $request->has('display-rewards'));
+            'commands' => ['sometimes', 'nullable', 'array'],
+        ]);
+
+        $commands = $request->input('commands');
+
+        Setting::updateSettings([
+            'vote.top-players-count' => $validated['top-players-count'],
+            'vote.display-rewards' => $request->has('display-rewards'),
+            'vote.ipv4-v6-compatibility' => $request->has('ip-compatibility'),
+            'vote.commands' => is_array($commands) ? json_encode(array_filter($commands)) : null,
+        ]);
 
         return redirect()->route('vote.admin.settings')->with('success', trans('admin.settings.status.updated'));
     }
