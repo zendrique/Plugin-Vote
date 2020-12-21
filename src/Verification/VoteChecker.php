@@ -94,6 +94,11 @@ class VoteChecker
             ->requireKey('secret')
             ->verifyByJson('hasVoted', true));
 
+        $this->register(VoteVerifier::for('minecraft-server.eu')
+            ->setApiUrl('https://minecraft-server.eu/api/v1/?object=votes&element=claim&key={server}&username={name}')
+            ->requireKey('api_key')
+            ->verifyByValue(1));
+
         $this->register(VoteVerifier::for('minecraft-mp.com')
             ->setApiUrl('https://minecraft-mp.com/api/?object=votes&element=claim&key={server}&username={name}')
             ->requireKey('api_key')
