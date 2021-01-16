@@ -104,6 +104,11 @@ class VoteChecker
             ->requireKey('api_key')
             ->verifyByValue(1));
 
+        $this->register(VoteVerifier::for('minecraftpocket-servers.com')
+            ->setApiUrl('https://minecraftpocket-servers.com/api/?object=votes&element=claim&key={server}&username={name}')
+            ->requireKey('api_key')
+            ->verifyByValue(1));
+
         $listForge = [
             'gmod-servers.com',
             'ark-servers.net',
