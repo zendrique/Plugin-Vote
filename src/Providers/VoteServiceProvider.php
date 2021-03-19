@@ -3,7 +3,10 @@
 namespace Azuriom\Plugin\Vote\Providers;
 
 use Azuriom\Extensions\Plugin\BasePluginServiceProvider;
+use Azuriom\Models\ActionLog;
 use Azuriom\Models\Permission;
+use Azuriom\Plugin\Vote\Models\Reward;
+use Azuriom\Plugin\Vote\Models\Site;
 
 class VoteServiceProvider extends BasePluginServiceProvider
 {
@@ -37,6 +40,11 @@ class VoteServiceProvider extends BasePluginServiceProvider
         Permission::registerPermissions([
             'vote.admin' => 'vote::admin.permission',
         ]);
+
+        ActionLog::registerLogModels([
+            Reward::class,
+            Site::class,
+        ], 'vote::admin.logs');
     }
 
     /**

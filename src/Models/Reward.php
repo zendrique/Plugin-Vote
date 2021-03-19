@@ -4,6 +4,7 @@ namespace Azuriom\Plugin\Vote\Models;
 
 use Azuriom\Models\Server;
 use Azuriom\Models\Traits\HasTablePrefix;
+use Azuriom\Models\Traits\Loggable;
 use Azuriom\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -28,6 +29,7 @@ use Illuminate\Database\Eloquent\Model;
 class Reward extends Model
 {
     use HasTablePrefix;
+    use Loggable;
 
     /**
      * The table prefix associated with the model.

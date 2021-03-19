@@ -81,4 +81,18 @@ return [
         'week' => 'Nombre de votes cette semaine',
         'day' => 'Nombre de votes aujourd\'hui',
     ],
+
+    'logs' => [
+        'vote-sites' => [
+            'created' => 'Création du site de vote #:id',
+            'updated' => 'Mise à jour du site de vote #:id',
+            'deleted' => 'Suppression du site de vote #:id',
+        ],
+
+        'vote-rewards' => [
+            'created' => 'Création de la récompense de vote #:id',
+            'updated' => 'Mise à jour de la récompense de vote #:id',
+            'deleted' => 'Suppression de la récompense de vote #:id',
+        ],
+    ],
 ];

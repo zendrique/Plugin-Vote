@@ -3,6 +3,7 @@
 namespace Azuriom\Plugin\Vote\Models;
 
 use Azuriom\Models\Traits\HasTablePrefix;
+use Azuriom\Models\Traits\Loggable;
 use Azuriom\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -28,6 +29,7 @@ use Illuminate\Support\Facades\Cache;
 class Site extends Model
 {
     use HasTablePrefix;
+    use Loggable;
 
     /**
      * The table prefix associated with the model.
@@ -51,6 +53,7 @@ class Site extends Model
      * @var array
      */
     protected $casts = [
+        'need_online' => 'boolean',
         'has_verification' => 'boolean',
         'is_enabled' => 'boolean',
     ];

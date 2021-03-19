@@ -81,4 +81,18 @@ return [
         'week' => 'Votes count this week',
         'day' => 'Votes count today',
     ],
+
+    'logs' => [
+        'vote-sites' => [
+            'created' => 'Created vote site #:id',
+            'updated' => 'Updated vote site #:id',
+            'deleted' => 'Deleted vote site #:id',
+        ],
+
+        'vote-rewards' => [
+            'created' => 'Created vote reward #:id',
+            'updated' => 'Updated vote reward #:id',
+            'deleted' => 'Deleted vote reward #:id',
+        ],
+    ],
 ];
