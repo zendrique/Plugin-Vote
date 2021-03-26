@@ -71,22 +71,22 @@ class VoteChecker
 
         $this->register(VoteVerifier::for('liste-serveurs.fr')
             ->setApiUrl('https://www.liste-serveurs.fr/api/checkVote/{server}/{ip}')
-            ->retrieveKeyByRegex('/^liste-serveurs\.fr\/[\w\d-]+\.(\d+)/', 2)
+            ->retrieveKeyByRegex('/^liste-serveurs\.fr\/[\w\d-]+\.(\d+)/')
             ->verifyByJson('success', true));
 
         $this->register(VoteVerifier::for('serveur-top.fr')
             ->setApiUrl('https://serveur-top.fr/api/checkVote/{server}/{ip}')
-            ->retrieveKeyByRegex('/^serveur-top\.fr\/[\w\d-]+\.(\d+)/', 2)
+            ->retrieveKeyByRegex('/^serveur-top\.fr\/[\w\d-]+\.(\d+)/')
             ->verifyByJson('success', true));
 
         $this->register(VoteVerifier::for('liste-minecraft-serveurs.com')
             ->setApiUrl('https://www.liste-minecraft-serveurs.com/Api/Worker/id_server/{server}/ip/{ip}')
-            ->retrieveKeyByRegex('/^liste-minecraft-serveurs\.com\/Serveur\/(\d+)/', 2)
+            ->retrieveKeyByRegex('/^liste-minecraft-serveurs\.com\/Serveur\/(\d+)/')
             ->verifyByJson('result', 202));
 
         $this->register(VoteVerifier::for('topserveursminecraft.com')
             ->setApiUrl('https://topserveursminecraft.com/api/server={server}&ip={ip}')
-            ->retrieveKeyByRegex('/^topserveursminecraft\.com\/[\w\d]+\.(\d+)/', 2)
+            ->retrieveKeyByRegex('/^topserveursminecraft\.com\/[\w\d]+\.(\d+)/')
             ->verifyByJson('voted', 1));
 
         $this->register(VoteVerifier::for('liste-serveur.fr')

@@ -17,11 +17,9 @@ class VoteController extends Controller
     public function index()
     {
         $votes = collect();
-        $date = now()->startOfMonth()->subYear();
+        $date = now()->startOfMonth()->subMonths(6);
 
-        while ($date->isPast()) {
-            $date->addMonth();
-
+        while ($date->addMonth()->isPast()) {
             $votes->put($date->format('m/Y'), Vote::getRawTopVoters($date, $date->clone()->endOfMonth()));
         }
 
@@ -44,9 +42,9 @@ class VoteController extends Controller
             'votes' => $votes,
 
             'votesCount' => Vote::count(),
-            'votesCountMonth' => Vote::where('created_at', now()->startOfMonth())->count(),
-            'votesCountWeek' => Vote::where('created_at', now()->startOfWeek())->count(),
-            'votesCountDay' => Vote::where('created_at', today())->count(),
+            'votesCountMonth' => Vote::where('created_at', '>', now()->startOfMonth())->count(),
+            'votesCountWeek' => Vote::where('created_at', '>', now()->startOfWeek())->count(),
+            'votesCountDay' => Vote::where('created_at', '>', today())->count(),
             'votesPerMonths' => Charts::countByMonths(Vote::query()),
             'votesPerDays' => Charts::countByDays(Vote::query()),
 
