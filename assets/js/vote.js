@@ -81,6 +81,7 @@ function refreshVote(url) {
     setTimeout(function () {
         axios.post(url + '/done', {
             user: username,
+            server_id: document.getElementById('stepServerIdInput').value
         }).then(function (response) {
             if (response.data.status === 'pending') {
                 refreshVote(url);
@@ -97,3 +98,33 @@ function refreshVote(url) {
         });
     }, 5000);
 }
+
+function selectSite() {
+
+    document.querySelectorAll("a[data-server-id]").forEach(function (elem) {
+
+        let arrayContains = function (toCompare, array) {
+            let contains = false;
+            array.forEach(value => {
+                if (value == toCompare) {
+                    contains = true;
+                }
+            })
+            return contains;
+        };
+
+        if (arrayContains(document.getElementById('stepServerIdInput').value, JSON.parse(elem.dataset.serverId))) {
+            elem.hidden = false;
+        } else {
+            elem.hidden = true;
+        }
+    })
+}
+
+document.getElementById('stepServerIdInput').addEventListener('change', function() {
+    selectSite();
+});
+
+(function () {
+    selectSite();
+})()

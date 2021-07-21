@@ -11,6 +11,7 @@ use Azuriom\Plugin\Vote\Verification\VoteChecker;
 use Carbon\CarbonInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Azuriom\Models\Server;
 
 class VoteController extends Controller
 {
@@ -21,8 +22,23 @@ class VoteController extends Controller
      */
     public function index()
     {
+
+        $servers = [];
+        $allServers = Server::executable()->get();
+
+        foreach (Reward::orderByDesc('chances')->get() as $reward) {
+            foreach ($allServers as $server) {
+                if ($server->id === $reward->server_id) {
+                    $servers[$reward->server_id] = $server->name;
+                }
+            }
+        }
+
+        asort($servers);
+
         return view('vote::index', [
             'sites' => Site::enabled()->get(),
+            'servers' => $servers,
             'rewards' => Reward::orderByDesc('chances')->get(),
             'votes' => Vote::getTopVoters(now()->startOfMonth()),
         ]);
@@ -105,7 +121,7 @@ class VoteController extends Controller
         $next = now()->addMinutes($site->vote_delay);
         Cache::put('votes.site.'.$site->id.'.'.$request->ip(), $next, $next);
 
-        $reward = $site->getRandomReward();
+        $reward = $site->getRandomReward($request->input('server_id'));
 
         if ($reward !== null) {
             $site->votes()->create([

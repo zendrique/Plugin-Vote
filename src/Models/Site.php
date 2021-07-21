@@ -68,14 +68,33 @@ class Site extends Model
         return $this->hasMany(Vote::class);
     }
 
-    public function getRandomReward()
+    public function getServersAsJson() {
+
+        $serversId = [];
+        foreach ($this->rewards as $reward) {
+            $serversId[] = $reward->server_id;
+        }
+
+        return json_encode($serversId);
+    }
+
+    public function getRandomReward(int $server_id = null)
     {
-        $total = $this->rewards->sum('chances');
+
+        $rewards = clone $this->rewards;
+
+        if ($server_id !== null) {
+            $rewards = $rewards->filter(function($reward) use ($server_id) {
+                return $reward->server_id === $server_id;
+            });
+        }
+
+        $total = $rewards->sum('chances');
         $random = random_int(0, $total);
 
         $sum = 0;
 
-        foreach ($this->rewards as $reward) {
+        foreach ($rewards as $reward) {
             $sum += $reward->chances;
 
             if ($sum >= $random) {
@@ -83,7 +102,7 @@ class Site extends Model
             }
         }
 
-        return $this->rewards->first();
+        return $rewards->first();
     }
 
     public function getNextVoteTime(User $user, Request $request)

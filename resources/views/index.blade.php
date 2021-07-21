@@ -28,8 +28,18 @@
                     <div class="spinner-border text-white" role="status"></div>
                 </div>
 
+                    @if (count($servers) > 1)
+                    <select id="stepServerIdInput">
+                        @foreach($servers as $id => $name)
+                            <option value="{{ $id }}">{{ $name }}</option>
+                        @endforeach
+                    </select>
+                    @else
+                    <input type="hidden" id="stepServerIdInput" value="{{ array_key_first($servers) }}">
+                    @endif
+
                 @forelse($sites as $site)
-                    <a class="btn btn-primary" href="{{ $site->url }}" target="_blank" rel="noopener noreferrer" data-site-url="{{ route('vote.vote', $site) }}">{{ $site->name }}</a>
+                    <a class="btn btn-primary" href="{{ $site->url }}" target="_blank" rel="noopener noreferrer" data-server-id='{{ $site->getServersAsJson() }}' data-site-url="{{ route('vote.vote', $site) }}">{{ $site->name }}</a>
                 @empty
                     <div class="alert alert-warning" role="alert">{{ trans('vote::messages.no-site') }}</div>
                 @endforelse
