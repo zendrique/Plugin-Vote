@@ -68,8 +68,8 @@ class Site extends Model
         return $this->hasMany(Vote::class);
     }
 
-    public function getServersAsJson() {
-
+    public function getServersAsJson() 
+    {
         $serversId = [];
         foreach ($this->rewards as $reward) {
             $serversId[] = $reward->server_id;
@@ -84,7 +84,7 @@ class Site extends Model
         $rewards = clone $this->rewards;
 
         if ($server_id !== null) {
-            $rewards = $rewards->filter(function($reward) use ($server_id) {
+            $rewards = $rewards->filter(function ($reward) use ($server_id) {
                 return $reward->server_id === $server_id;
             });
         }
