@@ -22,7 +22,6 @@ class VoteController extends Controller
      */
     public function index()
     {
-
         $servers = [];
         $allServers = Server::executable()->get();
 
