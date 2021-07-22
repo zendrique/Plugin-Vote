@@ -68,7 +68,7 @@ class Site extends Model
         return $this->hasMany(Vote::class);
     }
 
-    public function getServersAsJson() 
+    public function getServersAsJson()
     {
         $serversId = [];
         foreach ($this->rewards as $reward) {
