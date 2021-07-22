@@ -80,7 +80,6 @@ class Site extends Model
 
     public function getRandomReward(int $server_id = null)
     {
-
         $rewards = clone $this->rewards;
 
         if ($server_id !== null) {
