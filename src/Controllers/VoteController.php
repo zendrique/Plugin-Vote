@@ -3,6 +3,7 @@
 namespace Azuriom\Plugin\Vote\Controllers;
 
 use Azuriom\Http\Controllers\Controller;
+use Azuriom\Models\Server;
 use Azuriom\Models\User;
 use Azuriom\Plugin\Vote\Models\Reward;
 use Azuriom\Plugin\Vote\Models\Site;
@@ -11,7 +12,6 @@ use Azuriom\Plugin\Vote\Verification\VoteChecker;
 use Carbon\CarbonInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
-use Azuriom\Models\Server;
 
 class VoteController extends Controller
 {
