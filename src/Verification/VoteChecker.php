@@ -21,6 +21,11 @@ class VoteChecker
 
     public function __construct()
     {
+        $this->register(VoteVerifier::for('serveur-minecraft-vote.fr')
+            ->setApiUrl('https://serveur-minecraft-vote.fr/api/v1/servers/{server}/vote/{ip}')
+            ->retrieveKeyByRegex('/^serveur-minecraft-vote\.fr\/serveurs\/[\w\d-]+\.(\d+).*/')
+            ->verifyByJson('canVote', false));
+
         $this->register(VoteVerifier::for('liste-serv-minecraft.fr')
             ->setApiUrl('https://liste-serv-minecraft.fr/api/check?server={server}&ip={ip}')
             ->retrieveKeyByRegex('/^liste-serv-minecraft\.fr\/serveur\?id=(\d+)/')
@@ -216,5 +221,15 @@ class VoteChecker
         }
 
         return $host;
+    }
+
+    /**
+     * Returns the list of registered sites.
+     *
+     * @return array
+     */
+    public function getSites(): array
+    {
+        return $this->sites;
     }
 }
