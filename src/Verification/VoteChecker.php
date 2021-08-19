@@ -228,7 +228,7 @@ class VoteChecker
      *
      * @return array
      */
-    public function getSites(): array
+    public function getSites()
     {
         return $this->sites;
     }

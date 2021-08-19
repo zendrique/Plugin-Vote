@@ -12,5 +12,6 @@
             </form>
         </div>
     </div>
-    @include('vote::admin.sites._websites')
+
+    @include('vote::admin.sites._list')
 @endsection
