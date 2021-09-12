@@ -36,6 +36,8 @@ return [
         'auto-verification' => 'The votes on this site will be automatically verified.',
         'key-verification' => 'The votes on this website will be verified when the input below is filled.',
 
+        'list' => 'Sites on which votes can be verified',
+
         'verifications' => [
             'enable' => 'Enable votes verification',
 

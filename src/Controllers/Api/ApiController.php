@@ -3,7 +3,6 @@
 namespace Azuriom\Plugin\Vote\Controllers\Api;
 
 use Azuriom\Http\Controllers\Controller;
-use Azuriom\Plugin\Vote\Models\Pingback;
 use Azuriom\Plugin\Vote\Verification\VoteChecker;
 use Illuminate\Http\Request;
 

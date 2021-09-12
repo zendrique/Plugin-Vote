@@ -28,7 +28,12 @@ class SiteController extends Controller
      */
     public function create()
     {
-        return view('vote::admin.sites.create', ['rewards' => Reward::all()]);
+        $checker = app(VoteChecker::class);
+
+        return view('vote::admin.sites.create', [
+            'rewards' => Reward::all(),
+            'sites' => $checker->getSites(),
+        ]);
     }
 
     /**
@@ -57,9 +62,12 @@ class SiteController extends Controller
      */
     public function edit(Site $site)
     {
+        $checker = app(VoteChecker::class);
+
         return view('vote::admin.sites.edit', [
             'rewards' => Reward::all(),
             'site' => $site->load('rewards'),
+            'sites' => $checker->getSites(),
         ]);
     }
 

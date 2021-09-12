@@ -36,6 +36,8 @@ return [
         'auto-verification' => 'Les votes sur ce site seront automatiquement vérifiés.',
         'key-verification' => 'Les votes sur ce site seront vérifiés quand le champ ci-dessous est rempli.',
 
+        'list' => 'Sites sur lesquels les votes peuvent être vérifiés',
+
         'verifications' => [
             'enable' => 'Activer la vérification des votes',
 
