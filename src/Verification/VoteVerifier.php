@@ -19,7 +19,7 @@ class VoteVerifier
      *
      * @var string
      */
-    private $siteDomain;
+    public $siteDomain;
 
     /**
      * The api url of this site.
@@ -189,7 +189,10 @@ class VoteVerifier
 
             foreach ($ips as $ip) {
                 if ($this->apiUrl === null) {
-                    return $verificationMethod($ip);
+                    if ($verificationMethod($ip)) {
+                        return true;
+                    }
+                    continue;
                 }
 
                 $url = str_replace([
